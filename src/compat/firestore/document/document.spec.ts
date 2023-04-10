@@ -1,5 +1,14 @@
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFirestore, USE_EMULATOR, AngularFirestoreModule, AngularFirestoreDocument, DocumentReference } from '@angular/fire/compat/firestore';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFirestore,
+  USE_EMULATOR,
+  AngularFirestoreModule,
+  AngularFirestoreDocument,
+  DocumentReference,
+} from '@mandobridge/angularfire/compat/firestore';
 import { take } from 'rxjs/operators';
 
 import { TestBed } from '@angular/core/testing';
@@ -18,11 +27,9 @@ describe('AngularFirestoreDocument', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFirestoreModule
+        AngularFirestoreModule,
       ],
-      providers: [
-        { provide: USE_EMULATOR, useValue: ['localhost', 8080] }
-      ]
+      providers: [{ provide: USE_EMULATOR, useValue: ['localhost', 8080] }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -34,15 +41,16 @@ describe('AngularFirestoreDocument', () => {
   });
 
   describe('valueChanges()', () => {
-
-    it('should get unwrapped snapshot', done => {
+    it('should get unwrapped snapshot', (done) => {
       (async () => {
         const randomCollectionName = afs.firestore.collection('a').doc().id;
-        const ref = afs.firestore.doc(`${randomCollectionName}/FAKE`) as firebase.firestore.DocumentReference<Stock>;
+        const ref = afs.firestore.doc(
+          `${randomCollectionName}/FAKE`
+        ) as firebase.firestore.DocumentReference<Stock>;
         const stock = new AngularFirestoreDocument(ref, afs);
         await stock.set(FAKE_STOCK_DATA);
         const obs$ = stock.valueChanges();
-        obs$.pipe(take(1)).subscribe(async data => {
+        obs$.pipe(take(1)).subscribe(async (data) => {
           expect(data).toEqual(FAKE_STOCK_DATA);
           stock.delete().then(done).catch(done.fail);
         });
@@ -65,43 +73,41 @@ describe('AngularFirestoreDocument', () => {
         });
       })();
     });*/
-
   });
 
   describe('snapshotChanges()', () => {
-
-    it('should get action updates', done => {
+    it('should get action updates', (done) => {
       (async () => {
         const randomCollectionName = randomName(afs.firestore);
-        const ref = afs.firestore.doc(`${randomCollectionName}/FAKE`) as DocumentReference<Stock>;
+        const ref = afs.firestore.doc(
+          `${randomCollectionName}/FAKE`
+        ) as DocumentReference<Stock>;
         const stock = new AngularFirestoreDocument<Stock>(ref, afs);
         await stock.set(FAKE_STOCK_DATA);
-        const sub = stock
-          .snapshotChanges()
-          .subscribe(async a => {
-            sub.unsubscribe();
-            if (a.payload.exists) {
-              expect(a.payload.data()).toEqual(FAKE_STOCK_DATA);
-              stock.delete().then(done).catch(done.fail);
-            }
-          });
+        const sub = stock.snapshotChanges().subscribe(async (a) => {
+          sub.unsubscribe();
+          if (a.payload.exists) {
+            expect(a.payload.data()).toEqual(FAKE_STOCK_DATA);
+            stock.delete().then(done).catch(done.fail);
+          }
+        });
       })();
     });
 
-    it('should get unwrapped snapshot', done => {
+    it('should get unwrapped snapshot', (done) => {
       (async () => {
         const randomCollectionName = afs.firestore.collection('a').doc().id;
-        const ref = afs.firestore.doc(`${randomCollectionName}/FAKE`) as DocumentReference<Stock>;
+        const ref = afs.firestore.doc(
+          `${randomCollectionName}/FAKE`
+        ) as DocumentReference<Stock>;
         const stock = new AngularFirestoreDocument<Stock>(ref, afs);
         await stock.set(FAKE_STOCK_DATA);
         const obs$ = stock.valueChanges();
-        obs$.pipe(take(1)).subscribe(async data => {
+        obs$.pipe(take(1)).subscribe(async (data) => {
           expect(data).toEqual(FAKE_STOCK_DATA);
           stock.delete().then(done).catch(done.fail);
         });
       })();
     });
-
   });
-
 });

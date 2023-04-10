@@ -1,5 +1,5 @@
 import { Firestore as FirebaseFirestore } from 'firebase/firestore/lite';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class FirestoreInstances {
 }
 
 export const firestoreInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseFirestore>(FIRESTORE_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseFirestore>(FIRESTORE_PROVIDER_NAME))
+  ),
+  distinct()
 );

@@ -1,5 +1,5 @@
 import { AppCheck as FirebaseAppCheck } from 'firebase/app-check';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class AppCheckInstances {
 }
 
 export const appCheckInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseAppCheck>(APP_CHECK_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseAppCheck>(APP_CHECK_PROVIDER_NAME))
+  ),
+  distinct()
 );

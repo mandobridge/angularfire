@@ -6,9 +6,12 @@ import { createDataOperationMethod } from './data-operation';
 import { createRemoveMethod } from './remove';
 import { AngularFireDatabase } from '../database';
 import { map } from 'rxjs/operators';
-import { keepUnstableUntilFirst } from '@angular/fire';
+import { keepUnstableUntilFirst } from '@mandobridge/angularfire';
 
-export function createListReference<T= any>(query: DatabaseQuery, afDatabase: AngularFireDatabase): AngularFireList<T> {
+export function createListReference<T = any>(
+  query: DatabaseQuery,
+  afDatabase: AngularFireDatabase
+): AngularFireList<T> {
   const outsideAngularScheduler = afDatabase.schedulers.outsideAngular;
   const refInZone = afDatabase.schedulers.ngZone.run(() => query.ref);
   return {
@@ -18,31 +21,46 @@ export function createListReference<T= any>(query: DatabaseQuery, afDatabase: An
     push: (data: T) => refInZone.push(data),
     remove: createRemoveMethod(refInZone),
     snapshotChanges(events?: ChildEvent[]) {
-      return snapshotChanges<T>(query, events, outsideAngularScheduler).pipe(keepUnstableUntilFirst);
-    },
-    stateChanges(events?: ChildEvent[]) {
-      return stateChanges<T>(query, events, outsideAngularScheduler).pipe(keepUnstableUntilFirst);
-    },
-    auditTrail(events?: ChildEvent[]) {
-      return auditTrail<T>(query, events, outsideAngularScheduler).pipe(keepUnstableUntilFirst);
-    },
-    valueChanges<K extends string>(events?: ChildEvent[], options?: {idField?: K}) {
-      const snapshotChanges$ = snapshotChanges<T>(query, events, outsideAngularScheduler);
-      return snapshotChanges$.pipe(
-        map(actions => actions.map(a => {
-          if (options && options.idField) {
-            return {
-              ...a.payload.val() as T,
-              ...{
-                [options.idField]: a.key
-              }
-            };
-          } else {
-            return a.payload.val() as T;
-          }
-        })),
+      return snapshotChanges<T>(query, events, outsideAngularScheduler).pipe(
         keepUnstableUntilFirst
       );
-    }
+    },
+    stateChanges(events?: ChildEvent[]) {
+      return stateChanges<T>(query, events, outsideAngularScheduler).pipe(
+        keepUnstableUntilFirst
+      );
+    },
+    auditTrail(events?: ChildEvent[]) {
+      return auditTrail<T>(query, events, outsideAngularScheduler).pipe(
+        keepUnstableUntilFirst
+      );
+    },
+    valueChanges<K extends string>(
+      events?: ChildEvent[],
+      options?: { idField?: K }
+    ) {
+      const snapshotChanges$ = snapshotChanges<T>(
+        query,
+        events,
+        outsideAngularScheduler
+      );
+      return snapshotChanges$.pipe(
+        map((actions) =>
+          actions.map((a) => {
+            if (options && options.idField) {
+              return {
+                ...(a.payload.val() as T),
+                ...{
+                  [options.idField]: a.key,
+                },
+              };
+            } else {
+              return a.payload.val() as T;
+            }
+          })
+        ),
+        keepUnstableUntilFirst
+      );
+    },
   };
 }

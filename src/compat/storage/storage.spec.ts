@@ -1,8 +1,20 @@
 import { forkJoin } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireStorage, AngularFireStorageModule, AngularFireUploadTask, BUCKET, fromTask, USE_EMULATOR } from '@angular/fire/compat/storage';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireStorage,
+  AngularFireStorageModule,
+  AngularFireUploadTask,
+  BUCKET,
+  fromTask,
+  USE_EMULATOR,
+} from '@mandobridge/angularfire/compat/storage';
 import { COMMON_CONFIG } from '../../test-config';
 import { rando } from '../../utils';
 import { ChangeDetectorRef } from '@angular/core';
@@ -34,8 +46,8 @@ describe('AngularFireStorage', () => {
       ],
       providers: [
         ChangeDetectorRef,
-        { provide: USE_EMULATOR, useValue: ['localhost', 9199] }
-      ]
+        { provide: USE_EMULATOR, useValue: ['localhost', 9199] },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -56,37 +68,40 @@ describe('AngularFireStorage', () => {
   });
 
   describe('upload task', () => {
-
     it('should upload and delete a file', (done) => {
       const data = { angular: 'fire' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task = ref.put(blob);
       let emissionCount = 0;
       let lastSnap: firebase.storage.UploadTaskSnapshot;
-      task.snapshotChanges()
-        .subscribe(
-          snap => {
-            lastSnap = snap;
-            emissionCount++;
-            expect(snap).toBeDefined();
-          },
-          done.fail,
-          () => {
-            expect(lastSnap.state).toBe('success');
-            expect(emissionCount).toBeGreaterThan(0);
-            ref.delete().subscribe(done, done.fail);
-          });
+      task.snapshotChanges().subscribe(
+        (snap) => {
+          lastSnap = snap;
+          emissionCount++;
+          expect(snap).toBeDefined();
+        },
+        done.fail,
+        () => {
+          expect(lastSnap.state).toBe('success');
+          expect(emissionCount).toBeGreaterThan(0);
+          ref.delete().subscribe(done, done.fail);
+        }
+      );
     });
 
     it('should upload a file and observe the download url', (done) => {
       const data = { angular: 'fire' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       ref.put(blob).then(() => {
         const url$ = ref.getDownloadURL();
         url$.subscribe(
-          url => {
+          (url) => {
             expect(url).toBeDefined();
           },
           done.fail,
@@ -99,86 +114,105 @@ describe('AngularFireStorage', () => {
 
     it('should resolve the task as a promise', (done) => {
       const data = { angular: 'promise' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task: AngularFireUploadTask = ref.put(blob);
-      task.then(snap => {
-        expect(snap).toBeDefined();
-        done();
-      }).catch(done.fail);
+      task
+        .then((snap) => {
+          expect(snap).toBeDefined();
+          done();
+        })
+        .catch(done.fail);
     });
 
     it('should cancel the task', (done) => {
       const data = { angular: 'promise' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task: AngularFireUploadTask = ref.put(blob);
       let emissionCount = 0;
       let lastSnap: firebase.storage.UploadTaskSnapshot;
-      task.snapshotChanges().subscribe(snap => {
-        emissionCount++;
-        lastSnap = snap;
-        if (emissionCount === 1) {
-          task.cancel();
-        }
-      }, () => {
-        // TODO investigate, this doesn't appear to work...
-        // https://github.com/firebase/firebase-js-sdk/issues/4158
-        // expect(lastSnap.state).toEqual('canceled');
-        expect(emissionCount).toEqual(1);
-        expect(lastSnap.state).toEqual('running');
-        done();
-      }, done.fail);
+      task.snapshotChanges().subscribe(
+        (snap) => {
+          emissionCount++;
+          lastSnap = snap;
+          if (emissionCount === 1) {
+            task.cancel();
+          }
+        },
+        () => {
+          // TODO investigate, this doesn't appear to work...
+          // https://github.com/firebase/firebase-js-sdk/issues/4158
+          // expect(lastSnap.state).toEqual('canceled');
+          expect(emissionCount).toEqual(1);
+          expect(lastSnap.state).toEqual('running');
+          done();
+        },
+        done.fail
+      );
     });
 
     it('should be able to pause/resume the task', (done) => {
       const data = { angular: 'promise' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task: AngularFireUploadTask = ref.put(blob);
       let paused = false;
       task.pause();
-      task.snapshotChanges().subscribe(snap => {
-        if (snap.state === 'paused') {
-          paused = true;
-          task.resume();
+      task.snapshotChanges().subscribe(
+        (snap) => {
+          if (snap.state === 'paused') {
+            paused = true;
+            task.resume();
+          }
+        },
+        done.fail,
+        () => {
+          expect(paused).toBeTruthy();
+          done();
         }
-      }, done.fail, () => {
-        expect(paused).toBeTruthy();
-        done();
-      });
+      );
     });
 
     it('should work with an already finished task', (done) => {
       const data = { angular: 'promise' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.storage.ref(rando());
       const task = ref.put(blob);
       let emissionCount = 0;
       let lastSnap: firebase.storage.UploadTaskSnapshot;
-      task.then(_snap => {
+      task.then((_snap) => {
         fromTask(task).subscribe(
-            snap => {
-              lastSnap = snap;
-              emissionCount++;
-              expect(snap).toBeDefined();
-            },
-            done.fail,
-            () => {
-              expect(lastSnap.state).toBe('success');
-              expect(emissionCount).toBe(1);
-              ref.delete().then(done, done.fail);
-            });
+          (snap) => {
+            lastSnap = snap;
+            emissionCount++;
+            expect(snap).toBeDefined();
+          },
+          done.fail,
+          () => {
+            expect(lastSnap.state).toBe('success');
+            expect(emissionCount).toBe(1);
+            ref.delete().then(done, done.fail);
+          }
+        );
       });
     });
-
   });
 
   describe('reference', () => {
-
     it('it should upload, download, and delete', (done) => {
       const data = { angular: 'fire' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task = ref.put(blob);
       // Wait for the upload
@@ -187,7 +221,7 @@ describe('AngularFireStorage', () => {
           // get the url download
           mergeMap(() => ref.getDownloadURL()),
           // assert the URL
-          tap(url => expect(url).toBeDefined()),
+          tap((url) => expect(url).toBeDefined()),
           // Delete the file
           mergeMap(() => ref.delete())
         )
@@ -197,7 +231,9 @@ describe('AngularFireStorage', () => {
 
     it('should upload, get metadata, and delete', (done) => {
       const data = { angular: 'fire' };
-      const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+      const blob = blobOrBuffer(JSON.stringify(data), {
+        type: 'application/json',
+      });
       const ref = afStorage.ref(rando());
       const task = ref.put(blob, { customMetadata: { blah: 'blah' } });
       // Wait for the upload
@@ -206,16 +242,14 @@ describe('AngularFireStorage', () => {
           // get the metadata download
           mergeMap(() => ref.getMetadata()),
           // assert the URL
-          tap(meta => expect(meta.customMetadata).toEqual({ blah: 'blah' })),
+          tap((meta) => expect(meta.customMetadata).toEqual({ blah: 'blah' })),
           // Delete the file
           mergeMap(() => ref.delete())
         )
         // finish the test
         .subscribe(done, done.fail);
     });
-
   });
-
 });
 
 describe('AngularFireStorage w/options', () => {
@@ -230,14 +264,14 @@ describe('AngularFireStorage w/options', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireStorageModule
+        AngularFireStorageModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: firebaseAppName },
         { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
         { provide: BUCKET, useValue: storageBucket },
         { provide: USE_EMULATOR, useValue: ['localhost', 9199] },
-      ]
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -245,11 +279,12 @@ describe('AngularFireStorage w/options', () => {
   });
 
   afterEach(() => {
-     try { app.delete().catch(() => undefined); } catch (e) { }
+    try {
+      app.delete().catch(() => undefined);
+    } catch (e) {}
   });
 
   describe('<constructor>', () => {
-
     it('should exist', () => {
       expect(afStorage instanceof AngularFireStorage).toBe(true);
     });
@@ -267,15 +302,18 @@ describe('AngularFireStorage w/options', () => {
     });
 
     it('storage be pointing towards a different bucket', () => {
-      expect(afStorage.storage.ref().toString()).toEqual(`gs://${storageBucket}/`);
+      expect(afStorage.storage.ref().toString()).toEqual(
+        `gs://${storageBucket}/`
+      );
     });
 
     // TODO tests for Node?
     if (typeof Blob !== 'undefined') {
-
       it('it should upload, download, and delete', (done) => {
         const data = { angular: 'fire' };
-        const blob = blobOrBuffer(JSON.stringify(data), { type: 'application/json' });
+        const blob = blobOrBuffer(JSON.stringify(data), {
+          type: 'application/json',
+        });
         const name = rando();
         const ref = afStorage.ref(name);
         const task = ref.put(blob);
@@ -285,16 +323,19 @@ describe('AngularFireStorage w/options', () => {
             // get the url download
             mergeMap(() => ref.getDownloadURL()),
             // assert the URL
-            tap(url => expect(url).toMatch(new RegExp(`http:\\/\\/localhost:9199\\/v0\\/b\\/${storageBucket}\\/o\\/${name}`))),
+            tap((url) =>
+              expect(url).toMatch(
+                new RegExp(
+                  `http:\\/\\/localhost:9199\\/v0\\/b\\/${storageBucket}\\/o\\/${name}`
+                )
+              )
+            ),
             // Delete the file
             mergeMap(() => ref.delete())
           )
           // finish the test
           .subscribe(done, done.fail);
       });
-
     }
-
   });
-
 });

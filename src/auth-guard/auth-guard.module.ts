@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { AuthGuard } from './auth-guard';
 import { registerVersion } from 'firebase/app';
-import { VERSION } from '@angular/fire';
+import { VERSION } from '@mandobridge/angularfire';
 
 @NgModule({
-  providers: [ AuthGuard ]
+  providers: [AuthGuard],
 })
 export class AuthGuardModule {
   constructor() {

@@ -1,5 +1,5 @@
 import { Database as FirebaseDatabase } from 'firebase/database';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class DatabaseInstances {
 }
 
 export const databaseInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseDatabase>(DATABASE_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseDatabase>(DATABASE_PROVIDER_NAME))
+  ),
+  distinct()
 );

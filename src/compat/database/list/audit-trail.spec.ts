@@ -1,5 +1,14 @@
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireDatabase, AngularFireDatabaseModule, auditTrail, ChildEvent, URL } from '@angular/fire/compat/database';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireDatabase,
+  AngularFireDatabaseModule,
+  auditTrail,
+  ChildEvent,
+  URL,
+} from '@mandobridge/angularfire/compat/database';
 import { TestBed } from '@angular/core/testing';
 import { COMMON_CONFIG } from '../../../test-config';
 import { skip } from 'rxjs/operators';
@@ -12,7 +21,9 @@ describe('auditTrail', () => {
   let db: AngularFireDatabase;
   let createRef: (path: string) => firebase.database.Reference;
   let batch = {};
-  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map((item, i) => ({ key: i.toString(), ...item }));
+  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map(
+    (item, i) => ({ key: i.toString(), ...item })
+  );
   Object.keys(items).forEach((key, i) => {
     batch[i] = items[key];
   });
@@ -23,11 +34,9 @@ describe('auditTrail', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
       ],
-      providers: [
-        { provide: URL, useValue: 'http://localhost:9000' }
-      ]
+      providers: [{ provide: URL, useValue: 'http://localhost:9000' }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -39,26 +48,25 @@ describe('auditTrail', () => {
     db.database.goOffline();
   });
 
-  function prepareAuditTrail(opts: { events?: ChildEvent[], skipnumber: number } = { skipnumber: 0 }) {
+  function prepareAuditTrail(
+    opts: { events?: ChildEvent[]; skipnumber: number } = { skipnumber: 0 }
+  ) {
     const { events, skipnumber } = opts;
     const aref = createRef(rando());
     aref.set(batch);
     const changes = auditTrail(aref, events);
     return {
       changes: changes.pipe(skip(skipnumber)),
-      ref: aref
+      ref: aref,
     };
   }
 
   it('should listen to all events by default', (done) => {
-
     const { changes } = prepareAuditTrail();
-    changes.subscribe(actions => {
-      const data = actions.map(a => a.payload.val());
+    changes.subscribe((actions) => {
+      const data = actions.map((a) => a.payload.val());
       expect(data).toEqual(items);
       done();
     });
-
   });
-
 });

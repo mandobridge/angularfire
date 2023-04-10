@@ -1,4 +1,10 @@
-import { ComponentFactoryResolver, Injectable, NgZone, OnDestroy, Optional } from '@angular/core';
+import {
+  ComponentFactoryResolver,
+  Injectable,
+  NgZone,
+  OnDestroy,
+  Optional,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -6,14 +12,13 @@ import { AngularFireAnalytics } from './analytics';
 import { Title } from '@angular/platform-browser';
 import { UserTrackingService } from './user-tracking.service';
 import firebase from 'firebase/compat/app';
-import { VERSION } from '@angular/fire';
-import { ɵscreenViewEvent } from '@angular/fire/analytics';
+import { VERSION } from '@mandobridge/angularfire';
+import { ɵscreenViewEvent } from '@mandobridge/angularfire/analytics';
 
 const SCREEN_VIEW_EVENT = 'screen_view';
 
 @Injectable()
 export class ScreenTrackingService implements OnDestroy {
-
   private disposable: Subscription | undefined;
 
   constructor(
@@ -22,19 +27,31 @@ export class ScreenTrackingService implements OnDestroy {
     @Optional() title: Title,
     componentFactoryResolver: ComponentFactoryResolver,
     zone: NgZone,
-    @Optional() userTrackingService: UserTrackingService,
+    @Optional() userTrackingService: UserTrackingService
   ) {
-    firebase.registerVersion('angularfire', VERSION.full, 'compat-screen-tracking');
-    if (!router || !analytics) { return this; }
+    firebase.registerVersion(
+      'angularfire',
+      VERSION.full,
+      'compat-screen-tracking'
+    );
+    if (!router || !analytics) {
+      return this;
+    }
     zone.runOutsideAngular(() => {
-      this.disposable = ɵscreenViewEvent(router, title, componentFactoryResolver).pipe(
-          switchMap(async params => {
+      this.disposable = ɵscreenViewEvent(
+        router,
+        title,
+        componentFactoryResolver
+      )
+        .pipe(
+          switchMap(async (params) => {
             if (userTrackingService) {
               await userTrackingService.initialized;
             }
             return await analytics.logEvent(SCREEN_VIEW_EVENT, params);
           })
-      ).subscribe();
+        )
+        .subscribe();
     });
   }
 
@@ -43,5 +60,4 @@ export class ScreenTrackingService implements OnDestroy {
       this.disposable.unsubscribe();
     }
   }
-
 }

@@ -8,7 +8,7 @@ import { concatMap, distinct } from 'rxjs/operators';
 // the cleanest way to achieve this that I found is to export a new interface and class
 // the interface just extends the interface you want to turn into the class. This informs tyepscript
 // that the class has all the same methods/properties as the interface you want to extend without
-// breaking if Firebase adds/removes APIs in future releases. This was a big problem for @angular/fire
+// breaking if Firebase adds/removes APIs in future releases. This was a big problem for @mandobridge/angularfire
 // back when we constructed our own class. Then in the "new class" we just return the FirebaseApp in the
 // constructor, this also has the added benefit of Firebase methods taking our DI class without
 // casting. E.g,
@@ -34,5 +34,5 @@ export class FirebaseApps {
 
 export const firebaseApp$ = timer(0, 300).pipe(
   concatMap(() => from(getApps())),
-  distinct(),
+  distinct()
 );

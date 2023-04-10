@@ -1,5 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/app';
+import { FirebaseApp } from '@mandobridge/angularfire/app';
 import { Response } from 'express';
 import { RESPONSE } from '@nguniversal/express-engine/tokens';
 
@@ -18,12 +18,12 @@ import { RESPONSE } from '@nguniversal/express-engine/tokens';
     <app-storage></app-storage>
     <app-functions></app-functions>
   `,
-  styles: [``]
+  styles: [``],
 })
 export class HomeComponent {
   constructor(
     public readonly firebaseApp: FirebaseApp,
-    @Optional() @Inject(RESPONSE) response: Response,
+    @Optional() @Inject(RESPONSE) response: Response
   ) {
     if (response) {
       response.setHeader('Cache-Control', 'public,max-age=600');

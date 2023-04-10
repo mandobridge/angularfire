@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/compat';
+import { FirebaseApp } from '@mandobridge/angularfire/compat';
 
 @Component({
   selector: 'app-home',
@@ -15,9 +15,8 @@ import { FirebaseApp } from '@angular/fire/compat';
     <app-messaging></app-messaging>
     <app-functions></app-functions>
   `,
-  styles: [``]
+  styles: [``],
 })
 export class HomeComponent {
-  constructor(public readonly firebaseApp: FirebaseApp) {
-  }
+  constructor(public readonly firebaseApp: FirebaseApp) {}
 }

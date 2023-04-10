@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { AngularFireMessaging } from './messaging';
 import firebase from 'firebase/compat/app';
-import { VERSION } from '@angular/fire';
+import { VERSION } from '@mandobridge/angularfire';
 
 @NgModule({
-  providers: [ AngularFireMessaging ]
+  providers: [AngularFireMessaging],
 })
 export class AngularFireMessagingModule {
   constructor() {

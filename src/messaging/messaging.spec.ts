@@ -1,6 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { FirebaseApp, provideFirebaseApp, getApp, initializeApp, deleteApp } from '@angular/fire/app';
-import { Messaging, provideMessaging, getMessaging, isSupported } from '@angular/fire/messaging';
+import {
+  FirebaseApp,
+  provideFirebaseApp,
+  getApp,
+  initializeApp,
+  deleteApp,
+} from '@mandobridge/angularfire/app';
+import {
+  Messaging,
+  provideMessaging,
+  getMessaging,
+  isSupported,
+} from '@mandobridge/angularfire/messaging';
 import { COMMON_CONFIG } from '../test-config';
 import { rando } from '../utils';
 
@@ -10,7 +21,7 @@ describe('Messaging', () => {
   let providedMessaging: Messaging;
   let appName: string;
 
-  beforeAll(done => {
+  beforeAll((done) => {
     // The APP_INITIALIZER that is making isSupported() sync for DI may not
     // be done evaulating by the time we inject from the TestBed. We can
     // ensure correct behavior by waiting for the (global) isSuppported() promise
@@ -19,27 +30,24 @@ describe('Messaging', () => {
   });
 
   describe('single injection', () => {
-
     beforeEach(() => {
-        appName = rando();
-        TestBed.configureTestingModule({
-            imports: [
-                provideFirebaseApp(() => initializeApp(COMMON_CONFIG, appName)),
-                provideMessaging(() => {
-                    providedMessaging = getMessaging(getApp(appName));
-                    return providedMessaging;
-                }),
-            ],
-        });
-        app = TestBed.inject(FirebaseApp);
-        messaging = TestBed.inject(Messaging);
+      appName = rando();
+      TestBed.configureTestingModule({
+        imports: [
+          provideFirebaseApp(() => initializeApp(COMMON_CONFIG, appName)),
+          provideMessaging(() => {
+            providedMessaging = getMessaging(getApp(appName));
+            return providedMessaging;
+          }),
+        ],
+      });
+      app = TestBed.inject(FirebaseApp);
+      messaging = TestBed.inject(Messaging);
     });
 
     it('should be injectable', () => {
-        expect(providedMessaging).toBeTruthy();
-        expect(messaging).toEqual(providedMessaging);
+      expect(providedMessaging).toBeTruthy();
+      expect(messaging).toEqual(providedMessaging);
     });
-
   });
-
 });

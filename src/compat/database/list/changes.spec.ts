@@ -1,6 +1,14 @@
 import firebase from 'firebase/compat/app';
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireDatabase, AngularFireDatabaseModule, listChanges, URL } from '@angular/fire/compat/database';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireDatabase,
+  AngularFireDatabaseModule,
+  listChanges,
+  URL,
+} from '@mandobridge/angularfire/compat/database';
 import { TestBed } from '@angular/core/testing';
 import { COMMON_CONFIG } from '../../../test-config';
 import { skip, take } from 'rxjs/operators';
@@ -12,7 +20,9 @@ describe('listChanges', () => {
   let db: AngularFireDatabase;
   let ref: (path: string) => firebase.database.Reference;
   let batch = {};
-  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map((item, i) => ({ key: i.toString(), ...item }));
+  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map(
+    (item, i) => ({ key: i.toString(), ...item })
+  );
   Object.keys(items).forEach((key, i) => {
     batch[i] = items[key];
   });
@@ -23,11 +33,9 @@ describe('listChanges', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
       ],
-      providers: [
-        { provide: URL, useValue: 'http://localhost:9000' }
-      ]
+      providers: [{ provide: URL, useValue: 'http://localhost:9000' }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -40,24 +48,29 @@ describe('listChanges', () => {
   });
 
   describe('events', () => {
-
     it('should stream value at first', (done) => {
       const someRef = ref(rando());
       const obs = listChanges(someRef, ['child_added']);
-      obs.pipe(take(1)).subscribe(changes => {
-        const data = changes.map(change => change.payload.val());
-        expect(data).toEqual(items);
-      }).add(done);
+      obs
+        .pipe(take(1))
+        .subscribe((changes) => {
+          const data = changes.map((change) => change.payload.val());
+          expect(data).toEqual(items);
+        })
+        .add(done);
       someRef.set(batch);
     });
 
-    it('should process a new child_added event', done => {
+    it('should process a new child_added event', (done) => {
       const aref = ref(rando());
       const obs = listChanges(aref, ['child_added']);
-      obs.pipe(skip(1), take(1)).subscribe(changes => {
-        const data = changes.map(change => change.payload.val());
-        expect(data[3]).toEqual({ name: 'anotha one' });
-      }).add(done);
+      obs
+        .pipe(skip(1), take(1))
+        .subscribe((changes) => {
+          const data = changes.map((change) => change.payload.val());
+          expect(data[3]).toEqual({ name: 'anotha one' });
+        })
+        .add(done);
       aref.set(batch);
       aref.push({ name: 'anotha one' });
     });
@@ -65,41 +78,51 @@ describe('listChanges', () => {
     it('should stream in order events', (done) => {
       const aref = ref(rando());
       const obs = listChanges(aref.orderByChild('name'), ['child_added']);
-      obs.pipe(take(1)).subscribe(changes => {
-        const names = changes.map(change => change.payload.val().name);
-        expect(names[0]).toEqual('one');
-        expect(names[1]).toEqual('two');
-        expect(names[2]).toEqual('zero');
-      }).add(done);
+      obs
+        .pipe(take(1))
+        .subscribe((changes) => {
+          const names = changes.map((change) => change.payload.val().name);
+          expect(names[0]).toEqual('one');
+          expect(names[1]).toEqual('two');
+          expect(names[2]).toEqual('zero');
+        })
+        .add(done);
       aref.set(batch);
     });
 
     it('should stream in order events w/child_added', (done) => {
       const aref = ref(rando());
       const obs = listChanges(aref.orderByChild('name'), ['child_added']);
-      obs.pipe(skip(1), take(1)).subscribe(changes => {
-        const names = changes.map(change => change.payload.val().name);
-        expect(names[0]).toEqual('anotha one');
-        expect(names[1]).toEqual('one');
-        expect(names[2]).toEqual('two');
-        expect(names[3]).toEqual('zero');
-      }).add(done);
+      obs
+        .pipe(skip(1), take(1))
+        .subscribe((changes) => {
+          const names = changes.map((change) => change.payload.val().name);
+          expect(names[0]).toEqual('anotha one');
+          expect(names[1]).toEqual('one');
+          expect(names[2]).toEqual('two');
+          expect(names[3]).toEqual('zero');
+        })
+        .add(done);
       aref.set(batch);
       aref.push({ name: 'anotha one' });
     });
 
     it('should stream events filtering', (done) => {
       const aref = ref(rando());
-      const obs = listChanges(aref.orderByChild('name').equalTo('zero'), ['child_added']);
-      obs.pipe(skip(1), take(1)).subscribe(changes => {
-        const names = changes.map(change => change.payload.val().name);
-        expect(names[0]).toEqual('zero');
-        expect(names[1]).toEqual('zero');
-      }).add(done);
+      const obs = listChanges(aref.orderByChild('name').equalTo('zero'), [
+        'child_added',
+      ]);
+      obs
+        .pipe(skip(1), take(1))
+        .subscribe((changes) => {
+          const names = changes.map((change) => change.payload.val().name);
+          expect(names[0]).toEqual('zero');
+          expect(names[1]).toEqual('zero');
+        })
+        .add(done);
       aref.set(batch);
       aref.push({ name: 'zero' });
     });
-
 
     /* FLAKES? aref.set not fufilling
 
@@ -140,7 +163,5 @@ describe('listChanges', () => {
         aref.child(items[0].key).setPriority('a', () => {});
       });
     });*/
-
   });
-
 });

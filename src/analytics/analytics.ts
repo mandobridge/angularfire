@@ -1,5 +1,5 @@
 import { Analytics as FirebaseAnalytics } from 'firebase/analytics';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class AnalyticsInstances {
 }
 
 export const analyticInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseAnalytics>(ANALYTICS_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseAnalytics>(ANALYTICS_PROVIDER_NAME))
+  ),
+  distinct()
 );

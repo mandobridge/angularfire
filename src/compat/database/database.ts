@@ -1,11 +1,29 @@
-import { Inject, Injectable, InjectionToken, NgZone, Optional, PLATFORM_ID } from '@angular/core';
-import { AngularFireList, AngularFireObject, DatabaseQuery, PathReference, QueryFn } from './interfaces';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  NgZone,
+  Optional,
+  PLATFORM_ID,
+} from '@angular/core';
+import {
+  AngularFireList,
+  AngularFireObject,
+  DatabaseQuery,
+  PathReference,
+  QueryFn,
+} from './interfaces';
 import { getRef } from './utils';
 import { createListReference } from './list/create-reference';
 import { createObjectReference } from './object/create-reference';
-import { ɵAngularFireSchedulers } from '@angular/fire';
+import { ɵAngularFireSchedulers } from '@mandobridge/angularfire';
 import { FirebaseOptions } from 'firebase/app';
-import { ɵfirebaseAppFactory, FIREBASE_APP_NAME, FIREBASE_OPTIONS, ɵcacheInstance } from '@angular/fire/compat';
+import {
+  ɵfirebaseAppFactory,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  ɵcacheInstance,
+} from '@mandobridge/angularfire/compat';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import {
@@ -17,17 +35,23 @@ import {
   USE_DEVICE_LANGUAGE,
   PERSISTENCE,
   ɵauthFactory,
-} from '@angular/fire/compat/auth';
+} from '@mandobridge/angularfire/compat/auth';
 import firebase from 'firebase/compat/app';
-import { AppCheckInstances } from '@angular/fire/app-check';
+import { AppCheckInstances } from '@mandobridge/angularfire/app-check';
 
-export const URL = new InjectionToken<string>('angularfire2.realtimeDatabaseURL');
+export const URL = new InjectionToken<string>(
+  'angularfire2.realtimeDatabaseURL'
+);
 
-type UseEmulatorArguments = Parameters<firebase.database.Database['useEmulator']>;
-export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfire2.database.use-emulator');
+type UseEmulatorArguments = Parameters<
+  firebase.database.Database['useEmulator']
+>;
+export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>(
+  'angularfire2.database.use-emulator'
+);
 
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'any',
 })
 export class AngularFireDatabase {
   public readonly database: firebase.database.Database;
@@ -48,27 +72,45 @@ export class AngularFireDatabase {
     @Optional() @Inject(LANGUAGE_CODE) languageCode: string | null,
     @Optional() @Inject(USE_DEVICE_LANGUAGE) useDeviceLanguage: boolean | null,
     @Optional() @Inject(PERSISTENCE) persistence: string | null,
-    @Optional() _appCheckInstances: AppCheckInstances,
+    @Optional() _appCheckInstances: AppCheckInstances
   ) {
-
     const useEmulator: UseEmulatorArguments | null = _useEmulator;
     const app = ɵfirebaseAppFactory(options, zone, name);
 
     if (auth) {
-      ɵauthFactory(app, zone, useAuthEmulator, tenantId, languageCode, useDeviceLanguage, authSettings, persistence);
+      ɵauthFactory(
+        app,
+        zone,
+        useAuthEmulator,
+        tenantId,
+        languageCode,
+        useDeviceLanguage,
+        authSettings,
+        persistence
+      );
     }
 
-    this.database = ɵcacheInstance(`${app.name}.database.${databaseURL}`, 'AngularFireDatabase', app.name, () => {
-      const database = zone.runOutsideAngular(() => app.database(databaseURL || undefined));
-      if (useEmulator) {
-        database.useEmulator(...useEmulator);
-      }
-      return database;
-    }, [useEmulator]);
+    this.database = ɵcacheInstance(
+      `${app.name}.database.${databaseURL}`,
+      'AngularFireDatabase',
+      app.name,
+      () => {
+        const database = zone.runOutsideAngular(() =>
+          app.database(databaseURL || undefined)
+        );
+        if (useEmulator) {
+          database.useEmulator(...useEmulator);
+        }
+        return database;
+      },
+      [useEmulator]
+    );
   }
 
   list<T>(pathOrRef: PathReference, queryFn?: QueryFn): AngularFireList<T> {
-    const ref = this.schedulers.ngZone.runOutsideAngular(() => getRef(this.database, pathOrRef));
+    const ref = this.schedulers.ngZone.runOutsideAngular(() =>
+      getRef(this.database, pathOrRef)
+    );
     let query: DatabaseQuery = ref;
     if (queryFn) {
       query = queryFn(ref);
@@ -77,15 +119,18 @@ export class AngularFireDatabase {
   }
 
   object<T>(pathOrRef: PathReference): AngularFireObject<T> {
-    const ref = this.schedulers.ngZone.runOutsideAngular(() => getRef(this.database, pathOrRef));
+    const ref = this.schedulers.ngZone.runOutsideAngular(() =>
+      getRef(this.database, pathOrRef)
+    );
     return createObjectReference<T>(ref, this);
   }
 
   createPushId() {
-    const ref = this.schedulers.ngZone.runOutsideAngular(() => this.database.ref());
+    const ref = this.schedulers.ngZone.runOutsideAngular(() =>
+      this.database.ref()
+    );
     return ref.push().key;
   }
-
 }
 
 export {
@@ -98,5 +143,5 @@ export {
   AngularFireObject,
   AngularFireAction,
   Action,
-  SnapshotAction
+  SnapshotAction,
 } from './interfaces';

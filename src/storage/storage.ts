@@ -1,5 +1,5 @@
 import { FirebaseStorage } from 'firebase/storage';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class StorageInstances {
 }
 
 export const storageInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseStorage>(STORAGE_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseStorage>(STORAGE_PROVIDER_NAME))
+  ),
+  distinct()
 );

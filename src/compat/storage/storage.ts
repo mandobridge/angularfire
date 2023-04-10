@@ -1,19 +1,37 @@
-import { Inject, Injectable, InjectionToken, NgZone, Optional, PLATFORM_ID } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  NgZone,
+  Optional,
+  PLATFORM_ID,
+} from '@angular/core';
 import { createStorageRef } from './ref';
-import { ɵAngularFireSchedulers } from '@angular/fire';
+import { ɵAngularFireSchedulers } from '@mandobridge/angularfire';
 import { FirebaseOptions } from 'firebase/app';
-import { ɵfirebaseAppFactory, FIREBASE_APP_NAME, FIREBASE_OPTIONS, ɵcacheInstance } from '@angular/fire/compat';
+import {
+  ɵfirebaseAppFactory,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  ɵcacheInstance,
+} from '@mandobridge/angularfire/compat';
 import { UploadMetadata } from './interfaces';
 import 'firebase/compat/storage';
 import firebase from 'firebase/compat/app';
-import { AppCheckInstances } from '@angular/fire/app-check';
+import { AppCheckInstances } from '@mandobridge/angularfire/app-check';
 
 export const BUCKET = new InjectionToken<string>('angularfire2.storageBucket');
-export const MAX_UPLOAD_RETRY_TIME = new InjectionToken<number>('angularfire2.storage.maxUploadRetryTime');
-export const MAX_OPERATION_RETRY_TIME = new InjectionToken<number>('angularfire2.storage.maxOperationRetryTime');
+export const MAX_UPLOAD_RETRY_TIME = new InjectionToken<number>(
+  'angularfire2.storage.maxUploadRetryTime'
+);
+export const MAX_OPERATION_RETRY_TIME = new InjectionToken<number>(
+  'angularfire2.storage.maxOperationRetryTime'
+);
 
 type UseEmulatorArguments = Parameters<firebase.storage.Storage['useEmulator']>;
-export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfire2.storage.use-emulator');
+export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>(
+  'angularfire2.storage.use-emulator'
+);
 
 /**
  * AngularFireStorage Service
@@ -23,7 +41,7 @@ export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfir
  * Firebase.
  */
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'any',
 })
 export class AngularFireStorage {
   public readonly storage: firebase.storage.Storage;
@@ -37,25 +55,35 @@ export class AngularFireStorage {
     zone: NgZone,
     schedulers: ɵAngularFireSchedulers,
     @Optional() @Inject(MAX_UPLOAD_RETRY_TIME) maxUploadRetryTime: number | any,
-    @Optional() @Inject(MAX_OPERATION_RETRY_TIME) maxOperationRetryTime: number | any,
+    @Optional()
+    @Inject(MAX_OPERATION_RETRY_TIME)
+    maxOperationRetryTime: number | any,
     @Optional() @Inject(USE_EMULATOR) _useEmulator: any,
-    @Optional() _appCheckInstances: AppCheckInstances,
+    @Optional() _appCheckInstances: AppCheckInstances
   ) {
     const app = ɵfirebaseAppFactory(options, zone, name);
-    this.storage = ɵcacheInstance(`${app.name}.storage.${storageBucket}`, 'AngularFireStorage', app.name, () => {
-      const storage = zone.runOutsideAngular(() => app.storage(storageBucket || undefined));
-      const useEmulator = _useEmulator as UseEmulatorArguments|null;
-      if (useEmulator) {
-        storage.useEmulator(...useEmulator);
-      }
-      if (maxUploadRetryTime) {
-        storage.setMaxUploadRetryTime(maxUploadRetryTime);
-      }
-      if (maxOperationRetryTime) {
-        storage.setMaxOperationRetryTime(maxOperationRetryTime);
-      }
-      return storage;
-    }, [maxUploadRetryTime, maxOperationRetryTime]);
+    this.storage = ɵcacheInstance(
+      `${app.name}.storage.${storageBucket}`,
+      'AngularFireStorage',
+      app.name,
+      () => {
+        const storage = zone.runOutsideAngular(() =>
+          app.storage(storageBucket || undefined)
+        );
+        const useEmulator = _useEmulator as UseEmulatorArguments | null;
+        if (useEmulator) {
+          storage.useEmulator(...useEmulator);
+        }
+        if (maxUploadRetryTime) {
+          storage.setMaxUploadRetryTime(maxUploadRetryTime);
+        }
+        if (maxOperationRetryTime) {
+          storage.setMaxOperationRetryTime(maxOperationRetryTime);
+        }
+        return storage;
+      },
+      [maxUploadRetryTime, maxOperationRetryTime]
+    );
   }
 
   ref(path: string) {
@@ -71,5 +99,4 @@ export class AngularFireStorage {
     const ref = createStorageRef(storageRef);
     return ref.put(data, metadata);
   }
-
 }

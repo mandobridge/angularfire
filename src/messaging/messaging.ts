@@ -1,5 +1,5 @@
 import { Messaging as FirebaseMessaging } from 'firebase/messaging';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class MessagingInstances {
 }
 
 export const messagingInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseMessaging>(MESSAGING_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseMessaging>(MESSAGING_PROVIDER_NAME))
+  ),
+  distinct()
 );

@@ -1,10 +1,22 @@
-import { Inject, Injectable, InjectionToken, NgZone, Optional, PLATFORM_ID } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  NgZone,
+  Optional,
+  PLATFORM_ID,
+} from '@angular/core';
 import { EMPTY, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { map, shareReplay, switchMap, observeOn } from 'rxjs/operators';
-import { ɵAngularFireSchedulers } from '@angular/fire';
-import { ɵlazySDKProxy, ɵPromiseProxy, ɵapplyMixins, ɵcacheInstance } from '@angular/fire/compat';
-import { FirebaseApp } from '@angular/fire/compat';
+import { ɵAngularFireSchedulers } from '@mandobridge/angularfire';
+import {
+  ɵlazySDKProxy,
+  ɵPromiseProxy,
+  ɵapplyMixins,
+  ɵcacheInstance,
+} from '@mandobridge/angularfire/compat';
+import { FirebaseApp } from '@mandobridge/angularfire/compat';
 import firebase from 'firebase/compat/app';
 import { proxyPolyfillCompat } from './base';
 import { isSupported } from 'firebase/analytics';
@@ -13,11 +25,21 @@ export interface Config {
   [key: string]: any;
 }
 
-export const COLLECTION_ENABLED = new InjectionToken<boolean>('angularfire2.analytics.analyticsCollectionEnabled');
-export const APP_VERSION = new InjectionToken<string>('angularfire2.analytics.appVersion');
-export const APP_NAME = new InjectionToken<string>('angularfire2.analytics.appName');
-export const DEBUG_MODE = new InjectionToken<boolean>('angularfire2.analytics.debugMode');
-export const CONFIG = new InjectionToken<Config>('angularfire2.analytics.config');
+export const COLLECTION_ENABLED = new InjectionToken<boolean>(
+  'angularfire2.analytics.analyticsCollectionEnabled'
+);
+export const APP_VERSION = new InjectionToken<string>(
+  'angularfire2.analytics.appVersion'
+);
+export const APP_NAME = new InjectionToken<string>(
+  'angularfire2.analytics.appName'
+);
+export const DEBUG_MODE = new InjectionToken<boolean>(
+  'angularfire2.analytics.debugMode'
+);
+export const CONFIG = new InjectionToken<Config>(
+  'angularfire2.analytics.config'
+);
 
 const APP_NAME_KEY = 'app_name';
 const APP_VERSION_KEY = 'app_version';
@@ -27,25 +49,29 @@ const GTAG_FUNCTION_NAME = 'gtag'; // TODO rename these
 const DATA_LAYER_NAME = 'dataLayer';
 const SEND_TO_KEY = 'send_to';
 
-export interface AngularFireAnalytics extends ɵPromiseProxy<firebase.analytics.Analytics> {
-}
+export interface AngularFireAnalytics
+  extends ɵPromiseProxy<firebase.analytics.Analytics> {}
 
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'any',
 })
 export class AngularFireAnalytics {
-
   private measurementId: string;
   private analyticsInitialized: Promise<void> = new Promise(() => {});
 
   async updateConfig(config: Config) {
     await this.analyticsInitialized;
-    window[GTAG_FUNCTION_NAME](GTAG_CONFIG_COMMAND, this.measurementId, { ...config, update: true });
+    window[GTAG_FUNCTION_NAME](GTAG_CONFIG_COMMAND, this.measurementId, {
+      ...config,
+      update: true,
+    });
   }
 
   constructor(
     app: FirebaseApp,
-    @Optional() @Inject(COLLECTION_ENABLED) analyticsCollectionEnabled: boolean | null,
+    @Optional()
+    @Inject(COLLECTION_ENABLED)
+    analyticsCollectionEnabled: boolean | null,
     @Optional() @Inject(APP_VERSION) providedAppVersion: string | null,
     @Optional() @Inject(APP_NAME) providedAppName: string | null,
     @Optional() @Inject(DEBUG_MODE) debugModeEnabled: boolean | null,
@@ -53,11 +79,9 @@ export class AngularFireAnalytics {
     // tslint:disable-next-line:ban-types
     @Inject(PLATFORM_ID) platformId: Object,
     zone: NgZone,
-    schedulers: ɵAngularFireSchedulers,
+    schedulers: ɵAngularFireSchedulers
   ) {
-
     if (isPlatformBrowser(platformId)) {
-
       window[DATA_LAYER_NAME] = window[DATA_LAYER_NAME] || [];
 
       // It turns out we can't rely on the measurementId in the Firebase config JSON
@@ -83,7 +107,10 @@ export class AngularFireAnalytics {
           // TODO(jamesdaniels): I'm doing this as documented but it's still not
           //   showing up in the console. Investigate. Guessing it's just part of the
           //   whole GA4 transition mess.
-          if (args[0] === 'event' && args[2][SEND_TO_KEY] === this.measurementId) {
+          if (
+            args[0] === 'event' &&
+            args[2][SEND_TO_KEY] === this.measurementId
+          ) {
             if (providedAppName) {
               args[2][APP_NAME_KEY] = providedAppName;
             }
@@ -112,12 +139,13 @@ export class AngularFireAnalytics {
       // to gtag before ['js' timestamp] weren't getting parsed, so let's make a promise
       // that resolves when firebase/analytics has configured gtag.js that we wait on
       // before sending anything
-      const firebaseAnalyticsAlreadyInitialized = window[DATA_LAYER_NAME].some(parseMeasurementId);
+      const firebaseAnalyticsAlreadyInitialized =
+        window[DATA_LAYER_NAME].some(parseMeasurementId);
       if (firebaseAnalyticsAlreadyInitialized) {
         this.analyticsInitialized = Promise.resolve();
         patchGtag();
       } else {
-        this.analyticsInitialized = new Promise(resolve => {
+        this.analyticsInitialized = new Promise((resolve) => {
           patchGtag((...args) => {
             if (parseMeasurementId(...args)) {
               resolve();
@@ -132,33 +160,38 @@ export class AngularFireAnalytics {
       if (debugModeEnabled) {
         this.updateConfig({ [DEBUG_MODE_KEY]: 1 });
       }
-
     } else {
-
       this.analyticsInitialized = Promise.resolve();
-
     }
 
     const analytics = of(undefined).pipe(
       observeOn(schedulers.outsideAngular),
       switchMap(isSupported),
-      switchMap(supported => supported ? zone.runOutsideAngular(() => import('firebase/compat/analytics')) : EMPTY),
+      switchMap((supported) =>
+        supported
+          ? zone.runOutsideAngular(() => import('firebase/compat/analytics'))
+          : EMPTY
+      ),
       map(() => {
-        return ɵcacheInstance(`analytics`, 'AngularFireAnalytics', app.name, () => {
-          const analytics = app.analytics();
-          if (analyticsCollectionEnabled === false) {
-            analytics.setAnalyticsCollectionEnabled(false);
-          }
-          return analytics;
-        }, [app, analyticsCollectionEnabled, providedConfig, debugModeEnabled]);
+        return ɵcacheInstance(
+          `analytics`,
+          'AngularFireAnalytics',
+          app.name,
+          () => {
+            const analytics = app.analytics();
+            if (analyticsCollectionEnabled === false) {
+              analytics.setAnalyticsCollectionEnabled(false);
+            }
+            return analytics;
+          },
+          [app, analyticsCollectionEnabled, providedConfig, debugModeEnabled]
+        );
       }),
       shareReplay({ bufferSize: 1, refCount: false })
     );
 
     return ɵlazySDKProxy(this, analytics, zone);
-
   }
-
 }
 
 ɵapplyMixins(AngularFireAnalytics, [proxyPolyfillCompat]);

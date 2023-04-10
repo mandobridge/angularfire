@@ -2,10 +2,10 @@ import { NgModule, Optional } from '@angular/core';
 import { AngularFirePerformance } from './performance';
 import { PerformanceMonitoringService } from './performance.service';
 import firebase from 'firebase/compat/app';
-import { VERSION } from '@angular/fire';
+import { VERSION } from '@mandobridge/angularfire';
 
 @NgModule({
-  providers: [ AngularFirePerformance ]
+  providers: [AngularFirePerformance],
 })
 export class AngularFirePerformanceModule {
   constructor(

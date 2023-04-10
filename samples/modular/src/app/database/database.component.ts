@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { traceUntilFirst } from '@angular/fire/performance';
-import { Database, objectVal, ref } from '@angular/fire/database';
+import { traceUntilFirst } from '@mandobridge/angularfire/performance';
+import { Database, objectVal, ref } from '@mandobridge/angularfire/database';
 
 @Component({
   selector: 'app-database',
@@ -11,20 +11,15 @@ import { Database, objectVal, ref } from '@angular/fire/database';
       <code>{{ testObjectValue$ | async | json }}</code>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class DatabaseComponent implements OnInit {
-
   public readonly testObjectValue$: Observable<any>;
 
   constructor(database: Database) {
     const doc = ref(database, 'test');
-    this.testObjectValue$ = objectVal(doc).pipe(
-      traceUntilFirst('database')
-    );
+    this.testObjectValue$ = objectVal(doc).pipe(traceUntilFirst('database'));
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

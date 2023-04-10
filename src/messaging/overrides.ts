@@ -1,3 +1,3 @@
-import { ɵisMessagingSupportedFactory } from '@angular/fire';
+import { ɵisMessagingSupportedFactory } from '@mandobridge/angularfire';
 
 export const isSupported = ɵisMessagingSupportedFactory.async;

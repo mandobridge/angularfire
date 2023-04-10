@@ -1,4 +1,4 @@
-import { getDatabase, ref, objectVal } from '@angular/fire/database';
+import { getDatabase, ref, objectVal } from '@mandobridge/angularfire/database';
 import { connectDatabaseEmulatorInDevMode } from '../emulators';
 
 const database = getDatabase();

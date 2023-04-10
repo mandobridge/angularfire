@@ -25,9 +25,7 @@
               "src/main-sw.js",
               "src/firebase-messaging-sw.js"
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": [],
             "vendorChunk": true,
             "extractLicenses": false,
@@ -98,9 +96,7 @@
               "src/assets",
               "src/manifest.webmanifest"
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         },
@@ -111,9 +107,7 @@
             "main": "server.ts",
             "tsConfig": "tsconfig.server.json",
             "bundleDependencies": true,
-            "externalDependencies": [
-              "firebase/compat/app"
-            ],
+            "externalDependencies": ["firebase/compat/app"],
             "sourceMap": true,
             "optimization": false
           },
@@ -150,16 +144,14 @@
           "options": {
             "browserTarget": "sample:build:production",
             "serverTarget": "sample:server:production",
-            "routes": [
-              "/"
-            ]
+            "routes": ["/"]
           },
           "configurations": {
             "production": {}
           }
         },
         "deploy": {
-          "builder": "@angular/fire:deploy",
+          "builder": "@mandobridge/angularfire:deploy",
           "options": {
             "ssr": true,
             "functionsNodeVersion": 12,

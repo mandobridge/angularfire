@@ -36,9 +36,7 @@
               "src/firebase-messaging-sw.js",
               "src/manifest.webmanifest"
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": [],
             "vendorChunk": true,
             "extractLicenses": false,
@@ -113,14 +111,12 @@
               "src/firebase-messaging-sw.js",
               "src/manifest.webmanifest"
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         },
         "deploy": {
-          "builder": "@angular/fire:deploy",
+          "builder": "@mandobridge/angularfire:deploy",
           "options": {
             "ssr": true,
             "functionsNodeVersion": 16
@@ -135,8 +131,7 @@
             "optimization": false,
             "sourceMap": true,
             "extractLicenses": false,
-            "externalDependencies": [
-            ]
+            "externalDependencies": []
           },
           "configurations": {
             "production": {
@@ -173,9 +168,7 @@
         "prerender": {
           "builder": "@nguniversal/builders:prerender",
           "options": {
-            "routes": [
-              "/"
-            ]
+            "routes": ["/"]
           },
           "configurations": {
             "production": {

@@ -1,5 +1,5 @@
 import { RemoteConfig as FirebaseRemoteConfig } from 'firebase/remote-config';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -20,11 +20,15 @@ export interface RemoteConfigInstances extends Array<FirebaseRemoteConfig> {}
 
 export class RemoteConfigInstances {
   constructor() {
-    return ɵgetAllInstancesOf<FirebaseRemoteConfig>(REMOTE_CONFIG_PROVIDER_NAME);
+    return ɵgetAllInstancesOf<FirebaseRemoteConfig>(
+      REMOTE_CONFIG_PROVIDER_NAME
+    );
   }
 }
 
 export const remoteConfigInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseRemoteConfig>(REMOTE_CONFIG_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseRemoteConfig>(REMOTE_CONFIG_PROVIDER_NAME))
+  ),
+  distinct()
 );

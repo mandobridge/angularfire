@@ -1,5 +1,5 @@
 import { FirebasePerformance } from 'firebase/performance';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class PerformanceInstances {
 }
 
 export const performanceInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebasePerformance>(PERFORMANCE_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebasePerformance>(PERFORMANCE_PROVIDER_NAME))
+  ),
+  distinct()
 );

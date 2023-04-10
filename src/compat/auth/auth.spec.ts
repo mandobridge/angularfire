@@ -1,15 +1,24 @@
 import firebase from 'firebase/compat/app';
 import { Observable, Subject } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireAuth, AngularFireAuthModule, SETTINGS } from '@angular/fire/compat/auth';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireAuth,
+  AngularFireAuthModule,
+  SETTINGS,
+} from '@mandobridge/angularfire/compat/auth';
 import { COMMON_CONFIG } from '../../test-config';
 import 'firebase/compat/auth';
 import { rando } from '../../utils';
 
 const firebaseUser = {
   uid: '12345',
-  providerData: [{ displayName: 'jeffbcrossyface' }]
+  providerData: [{ displayName: 'jeffbcrossyface' }],
 } as firebase.User;
 
 describe('AngularFireAuth', () => {
@@ -21,11 +30,14 @@ describe('AngularFireAuth', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireAuthModule
+        AngularFireAuthModule,
       ],
       providers: [
-        { provide: SETTINGS, useValue: { appVerificationDisabledForTesting: true } }
-      ]
+        {
+          provide: SETTINGS,
+          useValue: { appVerificationDisabledForTesting: true },
+        },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -44,7 +56,7 @@ describe('AngularFireAuth', () => {
     it('should call operators and subscriber in the same zone as when service was initialized', (done) => {
       // Initialize the app outside of the zone, to mimick real life behavior.
       const ngZone = Zone.current.fork({
-        name: 'ngZone'
+        name: 'ngZone',
       });
       ngZone.run(() => {
         const subs = [
@@ -55,10 +67,10 @@ describe('AngularFireAuth', () => {
           afAuth.authState.subscribe(() => {
             expect(Zone.current.name).toBe('ngZone');
             done();
-          }, done.fail)
+          }, done.fail),
         ];
         mockAuthState.next(firebaseUser);
-        subs.forEach(s => s.unsubscribe());
+        subs.forEach((s) => s.unsubscribe());
       });
     });
   });
@@ -81,7 +93,7 @@ describe('AngularFireAuth', () => {
 
     // Check that the first value is null and second is the auth user
     const subs = afAuth.authState.subscribe({
-      next: (user => {
+      next: (user) => {
         if (count === 0) {
           expect(user).toBe(null);
           count = count + 1;
@@ -91,9 +103,9 @@ describe('AngularFireAuth', () => {
           subs.unsubscribe();
           done();
         }
-      }),
+      },
       error: done,
-      complete: done.fail
+      complete: done.fail,
     });
     mockAuthState.next(null);
   });
@@ -103,7 +115,7 @@ describe('AngularFireAuth', () => {
 
     // Check that the first value is null and second is the auth user
     const subs = afAuth.idToken.subscribe({
-      next: user => {
+      next: (user) => {
         if (count === 0) {
           expect(user).toBe(null);
           count = count + 1;
@@ -115,11 +127,10 @@ describe('AngularFireAuth', () => {
         }
       },
       error: done,
-      complete: done.fail
+      complete: done.fail,
     });
     mockAuthState.next(null);
   });
-
 });
 
 describe('AngularFireAuth with different app', () => {
@@ -133,12 +144,12 @@ describe('AngularFireAuth with different app', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireAuthModule
+        AngularFireAuthModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: firebaseAppName },
-        { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG }
-      ]
+        { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -146,7 +157,6 @@ describe('AngularFireAuth with different app', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireAuth type', () => {
       expect(afAuth instanceof AngularFireAuth).toEqual(true);
     });
@@ -160,5 +170,4 @@ describe('AngularFireAuth with different app', () => {
       expect(itsApp).toEqual(app);
     });
   });
-
 });

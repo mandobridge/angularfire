@@ -1,13 +1,27 @@
 import { TestBed } from '@angular/core/testing';
-import { FirebaseApp, provideFirebaseApp, getApp, initializeApp, deleteApp } from '@angular/fire/app';
-import { Auth, provideAuth, getAuth, connectAuthEmulator } from '@angular/fire/auth';
+import {
+  FirebaseApp,
+  provideFirebaseApp,
+  getApp,
+  initializeApp,
+  deleteApp,
+} from '@mandobridge/angularfire/app';
+import {
+  Auth,
+  provideAuth,
+  getAuth,
+  connectAuthEmulator,
+} from '@mandobridge/angularfire/auth';
 import { COMMON_CONFIG } from '../test-config';
-import { AuthGuard, AuthGuardModule } from '@angular/fire/auth-guard';
+import {
+  AuthGuard,
+  AuthGuardModule,
+} from '@mandobridge/angularfire/auth-guard';
 import { Router, RouterModule } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { rando } from '../utils';
 
-class TestComponent { }
+class TestComponent {}
 
 describe('AuthGuard', () => {
   let app: FirebaseApp;
@@ -28,12 +42,12 @@ describe('AuthGuard', () => {
         }),
         AuthGuardModule,
         RouterModule.forRoot([
-          { path: 'a', component: TestComponent, canActivate: [AuthGuard] }
-        ])
+          { path: 'a', component: TestComponent, canActivate: [AuthGuard] },
+        ]),
       ],
       providers: [
-        { provide: APP_BASE_HREF, useValue: 'http://localhost:4200/' }
-      ]
+        { provide: APP_BASE_HREF, useValue: 'http://localhost:4200/' },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -49,5 +63,4 @@ describe('AuthGuard', () => {
   it('router should be valid', () => {
     expect(router).toBeTruthy();
   });
-
 });

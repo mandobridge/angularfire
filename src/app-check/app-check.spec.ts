@@ -1,6 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { FirebaseApp, provideFirebaseApp, getApp, initializeApp, deleteApp } from '@angular/fire/app';
-import { Auth, provideAuth, getAuth, connectAuthEmulator } from '@angular/fire/auth';
+import {
+  FirebaseApp,
+  provideFirebaseApp,
+  getApp,
+  initializeApp,
+  deleteApp,
+} from '@mandobridge/angularfire/app';
+import {
+  Auth,
+  provideAuth,
+  getAuth,
+  connectAuthEmulator,
+} from '@mandobridge/angularfire/auth';
 import { COMMON_CONFIG } from '../test-config';
 import { rando } from '../utils';
 
@@ -11,29 +22,26 @@ describe('Auth', () => {
   let appName: string;
 
   describe('single injection', () => {
-
     beforeEach(() => {
-        appName = rando();
-        TestBed.configureTestingModule({
-            imports: [
-                provideFirebaseApp(() => initializeApp(COMMON_CONFIG, appName)),
-                provideAuth(() => {
-                    providedAuth = getAuth(getApp(appName));
-                    connectAuthEmulator(providedAuth, 'http://localhost:9099');
-                    return providedAuth;
-                }),
-            ],
-        });
-        app = TestBed.inject(FirebaseApp);
-        auth = TestBed.inject(Auth);
+      appName = rando();
+      TestBed.configureTestingModule({
+        imports: [
+          provideFirebaseApp(() => initializeApp(COMMON_CONFIG, appName)),
+          provideAuth(() => {
+            providedAuth = getAuth(getApp(appName));
+            connectAuthEmulator(providedAuth, 'http://localhost:9099');
+            return providedAuth;
+          }),
+        ],
+      });
+      app = TestBed.inject(FirebaseApp);
+      auth = TestBed.inject(Auth);
     });
 
     it('should be injectable', () => {
-        expect(auth).toBeTruthy();
-        expect(auth).toEqual(providedAuth);
-        expect(auth.app).toEqual(app);
+      expect(auth).toBeTruthy();
+      expect(auth).toEqual(providedAuth);
+      expect(auth.app).toEqual(app);
     });
-
   });
-
 });

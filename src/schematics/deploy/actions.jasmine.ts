@@ -1,7 +1,19 @@
 import { JsonObject, logging } from '@angular-devkit/core';
-import { BuilderContext, BuilderRun, ScheduleOptions, Target } from '@angular-devkit/architect';
-import { BuildTarget, FirebaseDeployConfig, FirebaseTools, FSHost } from '../interfaces';
-import deploy, { deployToFunction } from '@angular/fire/schematics/deploy/actions';
+import {
+  BuilderContext,
+  BuilderRun,
+  ScheduleOptions,
+  Target,
+} from '@angular-devkit/architect';
+import {
+  BuildTarget,
+  FirebaseDeployConfig,
+  FirebaseTools,
+  FSHost,
+} from '../interfaces';
+import deploy, {
+  deployToFunction,
+} from '@mandobridge/angularfire/schematics/deploy/actions';
 import { join } from 'path';
 import 'jasmine';
 
@@ -12,34 +24,29 @@ let fsHost: FSHost;
 const FIREBASE_PROJECT = 'ikachu-aa3ef';
 const PROJECT = 'pirojok-project';
 const STATIC_BUILD_TARGET: BuildTarget = {
-  name: `${PROJECT}:build:production`
+  name: `${PROJECT}:build:production`,
 };
 
 const FIREBASE_TOKEN = 'kkasllkascnkjnskjsdcskdckskdksdkjc';
 
 const SERVER_BUILD_TARGET: BuildTarget = {
-  name: `${PROJECT}:server:production`
+  name: `${PROJECT}:server:production`,
 };
 
-const login = () => Promise.resolve({ user: { email: 'foo@bar.baz' }});
-login.list = () => Promise.resolve([{ user: { email: 'foo@bar.baz' }}]);
-login.add = () => Promise.resolve([{ user: { email: 'foo@bar.baz' }}]);
+const login = () => Promise.resolve({ user: { email: 'foo@bar.baz' } });
+login.list = () => Promise.resolve([{ user: { email: 'foo@bar.baz' } }]);
+login.add = () => Promise.resolve([{ user: { email: 'foo@bar.baz' } }]);
 login.use = () => Promise.resolve('foo@bar.baz');
 
 const workspaceRoot = join('home', 'user');
 
 const initMocks = () => {
   fsHost = {
-    moveSync(_: string, __: string) {
-    },
-    renameSync(_: string, __: string) {
-    },
-    writeFileSync(_: string, __: string) {
-    },
-    copySync(_: string, __: string) {
-    },
-    removeSync(_: string) {
-    },
+    moveSync(_: string, __: string) {},
+    renameSync(_: string, __: string) {},
+    writeFileSync(_: string, __: string) {},
+    copySync(_: string, __: string) {},
+    removeSync(_: string) {},
     existsSync(_: string) {
       return false;
     },
@@ -54,36 +61,37 @@ const initMocks = () => {
     apps: {
       list: () => Promise.resolve([]),
       create: () => Promise.reject(),
-      sdkconfig: () => Promise.resolve({ fileName: '_', fileContents: '', sdkConfig: {}, }),
+      sdkconfig: () =>
+        Promise.resolve({ fileName: '_', fileContents: '', sdkConfig: {} }),
     },
     hosting: {
       sites: {
-        list: () => Promise.resolve({sites: []}),
+        list: () => Promise.resolve({ sites: [] }),
         create: () => Promise.reject(),
-      }
+      },
     },
     deploy: (_: FirebaseDeployConfig) => Promise.resolve(),
     use: () => Promise.resolve(),
     logger: {
-      add: () => { },
+      add: () => {},
       logger: {
-        add: () => { }
-      }
+        add: () => {},
+      },
     },
     cli: { version: () => '9.0.0' },
-    serve: () => Promise.resolve()
+    serve: () => Promise.resolve(),
   };
 
-  context = ({
+  context = {
     target: {
       configuration: 'production',
       project: PROJECT,
-      target: 'foo'
+      target: 'foo',
     },
     builder: {
       builderName: 'mock',
       description: 'mock',
-      optionSchema: false
+      optionSchema: false,
     },
     currentDirectory: 'cwd',
     id: 1,
@@ -96,60 +104,106 @@ const initMocks = () => {
         return { outputPath: 'dist/server' };
       }
     },
-    reportProgress: (_: number, __?: number, ___?: string) => {
-    },
-    reportStatus: (_: string) => {
-    },
-    reportRunning: () => {
-    },
-    scheduleBuilder: (_: string, __?: JsonObject, ___?: ScheduleOptions) => Promise.resolve({} as BuilderRun),
-    scheduleTarget: (_: Target, __?: JsonObject, ___?: ScheduleOptions) => Promise.resolve({} as BuilderRun)
-  } as any);
+    reportProgress: (_: number, __?: number, ___?: string) => {},
+    reportStatus: (_: string) => {},
+    reportRunning: () => {},
+    scheduleBuilder: (_: string, __?: JsonObject, ___?: ScheduleOptions) =>
+      Promise.resolve({} as BuilderRun),
+    scheduleTarget: (_: Target, __?: JsonObject, ___?: ScheduleOptions) =>
+      Promise.resolve({} as BuilderRun),
+  } as any;
 };
 
 describe('Deploy Angular apps', () => {
   beforeEach(() => initMocks());
 
   it('should call login', async () => {
-    const spy = spyOn(firebaseMock, 'login').and.resolveTo({ email: 'foo@bar.baz' });
+    const spy = spyOn(firebaseMock, 'login').and.resolveTo({
+      email: 'foo@bar.baz',
+    });
     await deploy(
-      firebaseMock, context, STATIC_BUILD_TARGET, undefined,
-      undefined, undefined, { projectId: FIREBASE_PROJECT, preview: false }
+      firebaseMock,
+      context,
+      STATIC_BUILD_TARGET,
+      undefined,
+      undefined,
+      undefined,
+      { projectId: FIREBASE_PROJECT, preview: false }
     );
     expect(spy).toHaveBeenCalled();
   });
 
   it('should not call login', async () => {
     const spy = spyOn(firebaseMock, 'login');
-    await deploy(firebaseMock, context, STATIC_BUILD_TARGET, undefined,  undefined, undefined, { preview: false }, FIREBASE_TOKEN);
+    await deploy(
+      firebaseMock,
+      context,
+      STATIC_BUILD_TARGET,
+      undefined,
+      undefined,
+      undefined,
+      { preview: false },
+      FIREBASE_TOKEN
+    );
     expect(spy).not.toHaveBeenCalled();
   });
 
   it('should invoke the builder', async () => {
     const spy = spyOn(context, 'scheduleTarget').and.callThrough();
-    await deploy(firebaseMock, context, STATIC_BUILD_TARGET, undefined,  undefined, undefined, { preview: false });
+    await deploy(
+      firebaseMock,
+      context,
+      STATIC_BUILD_TARGET,
+      undefined,
+      undefined,
+      undefined,
+      { preview: false }
+    );
     expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith({
-      target: 'build',
-      configuration: 'production',
-      project: PROJECT
-    }, undefined);
+    expect(spy).toHaveBeenCalledWith(
+      {
+        target: 'build',
+        configuration: 'production',
+        project: PROJECT,
+      },
+      undefined
+    );
   });
 
   it('should allow the buildTarget to be specified', async () => {
     const buildTarget = {
       name: `${PROJECT}:prerender`,
-      options: {}
+      options: {},
     };
     const spy = spyOn(context, 'scheduleTarget').and.callThrough();
-    await deploy(firebaseMock, context, buildTarget, undefined,  undefined, undefined, { preview: false });
+    await deploy(
+      firebaseMock,
+      context,
+      buildTarget,
+      undefined,
+      undefined,
+      undefined,
+      { preview: false }
+    );
     expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith({ target: 'prerender', project: PROJECT }, {});
+    expect(spy).toHaveBeenCalledWith(
+      { target: 'prerender', project: PROJECT },
+      {}
+    );
   });
 
   it('should invoke firebase.deploy', async () => {
     const spy = spyOn(firebaseMock, 'deploy').and.callThrough();
-    await deploy(firebaseMock, context, STATIC_BUILD_TARGET, undefined,  undefined, undefined, { preview: false }, FIREBASE_TOKEN);
+    await deploy(
+      firebaseMock,
+      context,
+      STATIC_BUILD_TARGET,
+      undefined,
+      undefined,
+      undefined,
+      { preview: false },
+      FIREBASE_TOKEN
+    );
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith({
       cwd: 'cwd',
@@ -163,7 +217,15 @@ describe('Deploy Angular apps', () => {
   describe('error handling', () => {
     it('throws if there is no firebase project', async () => {
       try {
-        await deploy(firebaseMock, context, STATIC_BUILD_TARGET, undefined, undefined, undefined, { preview: false  });
+        await deploy(
+          firebaseMock,
+          context,
+          STATIC_BUILD_TARGET,
+          undefined,
+          undefined,
+          undefined,
+          { preview: false }
+        );
       } catch (e) {
         expect(e.message).toMatch(/Cannot find firebase project/);
       }
@@ -172,7 +234,15 @@ describe('Deploy Angular apps', () => {
     it('throws if there is no target project', async () => {
       context.target = undefined;
       try {
-        await deploy(firebaseMock, context, STATIC_BUILD_TARGET, undefined, undefined, undefined, { preview: false });
+        await deploy(
+          firebaseMock,
+          context,
+          STATIC_BUILD_TARGET,
+          undefined,
+          undefined,
+          undefined,
+          { preview: false }
+        );
       } catch (e) {
         expect(e.message).toMatch(/Cannot execute the build target/);
       }
@@ -191,7 +261,7 @@ describe('universal deployment', () => {
       workspaceRoot,
       STATIC_BUILD_TARGET,
       SERVER_BUILD_TARGET,
-      { preview: false  },
+      { preview: false },
       undefined,
       fsHost
     );
@@ -223,8 +293,12 @@ describe('universal deployment', () => {
     const packageArgs = spy.calls.argsFor(0);
     const functionArgs = spy.calls.argsFor(1);
 
-    expect(packageArgs[0]).toBe(join(workspaceRoot, 'dist', 'functions', 'package.json'));
-    expect(functionArgs[0]).toBe(join(workspaceRoot, 'dist', 'functions', 'index.js'));
+    expect(packageArgs[0]).toBe(
+      join(workspaceRoot, 'dist', 'functions', 'package.json')
+    );
+    expect(functionArgs[0]).toBe(
+      join(workspaceRoot, 'dist', 'functions', 'index.js')
+    );
   });
 
   it('should rename the index.html file in the nested dist', async () => {
@@ -235,7 +309,7 @@ describe('universal deployment', () => {
       workspaceRoot,
       STATIC_BUILD_TARGET,
       SERVER_BUILD_TARGET,
-      { preview: false  },
+      { preview: false },
       undefined,
       fsHost
     );
@@ -246,7 +320,7 @@ describe('universal deployment', () => {
 
     expect(packageArgs).toEqual([
       join(workspaceRoot, 'dist', 'dist', 'browser', 'index.html'),
-      join(workspaceRoot, 'dist', 'dist', 'browser', 'index.original.html')
+      join(workspaceRoot, 'dist', 'dist', 'browser', 'index.original.html'),
     ]);
   });
 
@@ -269,7 +343,14 @@ describe('universal deployment', () => {
 
     expect(packageArgs).toEqual([
       join(workspaceRoot, 'dist', 'functions', 'dist', 'browser', 'index.html'),
-      join(workspaceRoot, 'dist', 'functions', 'dist', 'browser', 'index.original.html')
+      join(
+        workspaceRoot,
+        'dist',
+        'functions',
+        'dist',
+        'browser',
+        'index.original.html'
+      ),
     ]);
   });
 

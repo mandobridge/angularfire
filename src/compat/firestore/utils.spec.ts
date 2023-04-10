@@ -1,5 +1,5 @@
 import firebase from 'firebase/compat/app';
-import { AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { AngularFirestoreCollection } from '@mandobridge/angularfire/compat/firestore';
 
 export interface Stock {
   name: string;
@@ -8,7 +8,8 @@ export interface Stock {
 
 export const FAKE_STOCK_DATA = { name: 'FAKE', price: 1 };
 
-export const randomName = (firestore): string => firestore.collection('a').doc().id;
+export const randomName = (firestore): string =>
+  firestore.collection('a').doc().id;
 
 export const createRandomStocks = async (
   firestore: firebase.firestore.Firestore,
@@ -32,23 +33,43 @@ export const createRandomStocks = async (
 };
 
 export function deleteThemAll(names, ref) {
-  const promises = names.map(name => ref.doc(name).delete());
+  const promises = names.map((name) => ref.doc(name).delete());
   return Promise.all(promises);
 }
 
-export function delayUpdate<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, data, delay = 250) {
+export function delayUpdate<T>(
+  collection:
+    | AngularFirestoreCollection<T>
+    | firebase.firestore.CollectionReference,
+  path,
+  data,
+  delay = 250
+) {
   setTimeout(() => {
     collection.doc(path).update(data);
   }, delay);
 }
 
-export function delayAdd<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, data, delay = 250) {
+export function delayAdd<T>(
+  collection:
+    | AngularFirestoreCollection<T>
+    | firebase.firestore.CollectionReference,
+  path,
+  data,
+  delay = 250
+) {
   setTimeout(() => {
     collection.doc(path).set(data);
   }, delay);
 }
 
-export function delayDelete<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, delay = 250) {
+export function delayDelete<T>(
+  collection:
+    | AngularFirestoreCollection<T>
+    | firebase.firestore.CollectionReference,
+  path,
+  delay = 250
+) {
   setTimeout(() => {
     collection.doc(path).delete();
   }, delay);

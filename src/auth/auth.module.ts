@@ -1,15 +1,35 @@
-import { NgModule, Optional, NgZone, InjectionToken, ModuleWithProviders, Injector } from '@angular/core';
+import {
+  NgModule,
+  Optional,
+  NgZone,
+  InjectionToken,
+  ModuleWithProviders,
+  Injector,
+} from '@angular/core';
 import { Auth as FirebaseAuth } from 'firebase/auth';
-import { ɵgetDefaultInstanceOf, ɵAngularFireSchedulers, VERSION } from '@angular/fire';
+import {
+  ɵgetDefaultInstanceOf,
+  ɵAngularFireSchedulers,
+  VERSION,
+} from '@mandobridge/angularfire';
 import { Auth, AuthInstances, AUTH_PROVIDER_NAME } from './auth';
-import { FirebaseApps, FirebaseApp } from '@angular/fire/app';
+import { FirebaseApps, FirebaseApp } from '@mandobridge/angularfire/app';
 import { registerVersion } from 'firebase/app';
-import { AppCheckInstances } from '@angular/fire/app-check';
+import { AppCheckInstances } from '@mandobridge/angularfire/app-check';
 
-export const PROVIDED_AUTH_INSTANCES = new InjectionToken<Auth[]>('angularfire2.auth-instances');
+export const PROVIDED_AUTH_INSTANCES = new InjectionToken<Auth[]>(
+  'angularfire2.auth-instances'
+);
 
-export function defaultAuthInstanceFactory(provided: FirebaseAuth[]|undefined, defaultApp: FirebaseApp) {
-  const defaultAuth = ɵgetDefaultInstanceOf<FirebaseAuth>(AUTH_PROVIDER_NAME, provided, defaultApp);
+export function defaultAuthInstanceFactory(
+  provided: FirebaseAuth[] | undefined,
+  defaultApp: FirebaseApp
+) {
+  const defaultAuth = ɵgetDefaultInstanceOf<FirebaseAuth>(
+    AUTH_PROVIDER_NAME,
+    provided,
+    defaultApp
+  );
   return defaultAuth && new Auth(defaultAuth);
 }
 
@@ -22,25 +42,17 @@ export function authInstanceFactory(fn: (injector: Injector) => FirebaseAuth) {
 
 const AUTH_INSTANCES_PROVIDER = {
   provide: AuthInstances,
-  deps: [
-    [new Optional(), PROVIDED_AUTH_INSTANCES ],
-  ]
+  deps: [[new Optional(), PROVIDED_AUTH_INSTANCES]],
 };
 
 const DEFAULT_AUTH_INSTANCE_PROVIDER = {
   provide: Auth,
   useFactory: defaultAuthInstanceFactory,
-  deps: [
-    [new Optional(), PROVIDED_AUTH_INSTANCES ],
-    FirebaseApp,
-  ]
+  deps: [[new Optional(), PROVIDED_AUTH_INSTANCES], FirebaseApp],
 };
 
 @NgModule({
-  providers: [
-    DEFAULT_AUTH_INSTANCE_PROVIDER,
-    AUTH_INSTANCES_PROVIDER,
-  ]
+  providers: [DEFAULT_AUTH_INSTANCE_PROVIDER, AUTH_INSTANCES_PROVIDER],
 })
 export class AuthModule {
   constructor() {
@@ -48,21 +60,26 @@ export class AuthModule {
   }
 }
 
-export function provideAuth(fn: (injector: Injector) => FirebaseAuth, ...deps: any[]): ModuleWithProviders<AuthModule> {
+export function provideAuth(
+  fn: (injector: Injector) => FirebaseAuth,
+  ...deps: any[]
+): ModuleWithProviders<AuthModule> {
   return {
     ngModule: AuthModule,
-    providers: [{
-      provide: PROVIDED_AUTH_INSTANCES,
-      useFactory: authInstanceFactory(fn),
-      multi: true,
-      deps: [
-        NgZone,
-        Injector,
-        ɵAngularFireSchedulers,
-        FirebaseApps,
-        [new Optional(), AppCheckInstances ],
-        ...deps,
-      ]
-    }]
+    providers: [
+      {
+        provide: PROVIDED_AUTH_INSTANCES,
+        useFactory: authInstanceFactory(fn),
+        multi: true,
+        deps: [
+          NgZone,
+          Injector,
+          ɵAngularFireSchedulers,
+          FirebaseApps,
+          [new Optional(), AppCheckInstances],
+          ...deps,
+        ],
+      },
+    ],
   };
 }

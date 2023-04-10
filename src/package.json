@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/ng-packagr/package.schema.json",
-  "name": "@angular/fire",
+  "name": "@mandobridge/angularfire",
   "version": "ANGULARFIRE2_VERSION",
   "description": "The official Angular library for Firebase.",
   "schematics": "./schematics/collection.json",
@@ -31,7 +31,9 @@
     "firebase-tools": "^9.9.0 || ^10.0.0 || ^11.0.0"
   },
   "peerDependenciesMeta": {
-    "firebase-tools": { "optional": true }
+    "firebase-tools": {
+      "optional": true
+    }
   },
   "dependencies": {
     "firebase": "^9.8.0",
@@ -65,12 +67,23 @@
     },
     "dest": "../dist/packages-dist",
     "allowedNonPeerDependencies": [
-      "@angular-devkit/schematics", "@schematics/angular",
-      "fuzzy", "inquirer-autocomplete-prompt",
-      "open", "jsonc-parser", "ora", "winston",
-      "triple-beam", "@schematics/angular", "node-fetch",
-      "semver", "inquirer", "fs-extra", "file-loader",
-      "firebase", "rxfire"
+      "@angular-devkit/schematics",
+      "@schematics/angular",
+      "fuzzy",
+      "inquirer-autocomplete-prompt",
+      "open",
+      "jsonc-parser",
+      "ora",
+      "winston",
+      "triple-beam",
+      "@schematics/angular",
+      "node-fetch",
+      "semver",
+      "inquirer",
+      "fs-extra",
+      "file-loader",
+      "firebase",
+      "rxfire"
     ]
   },
   "ng-update": {

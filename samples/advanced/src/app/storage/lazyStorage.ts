@@ -1,4 +1,8 @@
-import { ref, getStorage, getDownloadURL } from '@angular/fire/storage';
+import {
+  ref,
+  getStorage,
+  getDownloadURL,
+} from '@mandobridge/angularfire/storage';
 import { connectStorageEmulatorInDevMode } from '../emulators';
 
 export const storage = getStorage();

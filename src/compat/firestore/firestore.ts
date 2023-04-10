@@ -1,4 +1,11 @@
-import { Inject, Injectable, InjectionToken, NgZone, Optional, PLATFORM_ID } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  NgZone,
+  Optional,
+  PLATFORM_ID,
+} from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import {
   AssociatedReference,
@@ -8,13 +15,19 @@ import {
   Query,
   QueryFn,
   QueryGroupFn,
-  Settings
+  Settings,
 } from './interfaces';
 import { AngularFirestoreDocument } from './document/document';
 import { AngularFirestoreCollection } from './collection/collection';
 import { AngularFirestoreCollectionGroup } from './collection-group/collection-group';
-import { ɵAngularFireSchedulers } from '@angular/fire';
-import { FirebaseApp, ɵfirebaseAppFactory, FIREBASE_APP_NAME, FIREBASE_OPTIONS, ɵcacheInstance } from '@angular/fire/compat';
+import { ɵAngularFireSchedulers } from '@mandobridge/angularfire';
+import {
+  FirebaseApp,
+  ɵfirebaseAppFactory,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  ɵcacheInstance,
+} from '@mandobridge/angularfire/compat';
 import { FirebaseOptions } from 'firebase/app';
 import { isPlatformServer } from '@angular/common';
 import firebase from 'firebase/compat/app';
@@ -29,18 +42,28 @@ import {
   USE_DEVICE_LANGUAGE,
   PERSISTENCE,
   ɵauthFactory,
-} from '@angular/fire/compat/auth';
-import { AppCheckInstances } from '@angular/fire/app-check';
+} from '@mandobridge/angularfire/compat/auth';
+import { AppCheckInstances } from '@mandobridge/angularfire/app-check';
 
 /**
  * The value of this token determines whether or not the firestore will have persistance enabled
  */
-export const ENABLE_PERSISTENCE = new InjectionToken<boolean>('angularfire2.enableFirestorePersistence');
-export const PERSISTENCE_SETTINGS = new InjectionToken<PersistenceSettings | undefined>('angularfire2.firestore.persistenceSettings');
-export const SETTINGS = new InjectionToken<Settings>('angularfire2.firestore.settings');
+export const ENABLE_PERSISTENCE = new InjectionToken<boolean>(
+  'angularfire2.enableFirestorePersistence'
+);
+export const PERSISTENCE_SETTINGS = new InjectionToken<
+  PersistenceSettings | undefined
+>('angularfire2.firestore.persistenceSettings');
+export const SETTINGS = new InjectionToken<Settings>(
+  'angularfire2.firestore.settings'
+);
 
-type UseEmulatorArguments = Parameters<firebase.firestore.Firestore['useEmulator']>;
-export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfire2.firestore.use-emulator');
+type UseEmulatorArguments = Parameters<
+  firebase.firestore.Firestore['useEmulator']
+>;
+export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>(
+  'angularfire2.firestore.use-emulator'
+);
 
 /**
  * A utility methods for associating a collection reference with
@@ -54,17 +77,23 @@ export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfir
  *  return ref.where('age', '<', 200);
  * });
  */
-export function associateQuery<T>(collectionRef: CollectionReference<T>, queryFn = ref => ref): AssociatedReference<T> {
+export function associateQuery<T>(
+  collectionRef: CollectionReference<T>,
+  queryFn = (ref) => ref
+): AssociatedReference<T> {
   const query = queryFn(collectionRef);
   const ref = collectionRef;
   return { query, ref };
 }
 
-type InstanceCache = Map<FirebaseApp, [
-  firebase.firestore.Firestore,
-  firebase.firestore.Settings | null,
-  UseEmulatorArguments | null,
-  boolean | null]
+type InstanceCache = Map<
+  FirebaseApp,
+  [
+    firebase.firestore.Firestore,
+    firebase.firestore.Settings | null,
+    UseEmulatorArguments | null,
+    boolean | null
+  ]
 >;
 
 /**
@@ -77,7 +106,7 @@ type InstanceCache = Map<FirebaseApp, [
  * Example:
  *
  * import { Component } from '@angular/core';
- * import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+ * import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@mandobridge/angularfire/firestore';
  * import { Observable } from 'rxjs/Observable';
  * import { from } from 'rxjs/observable';
  *
@@ -123,7 +152,7 @@ type InstanceCache = Map<FirebaseApp, [
  * }
  */
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'any',
 })
 export class AngularFirestore {
   public readonly firestore: firebase.firestore.Firestore;
@@ -137,13 +166,17 @@ export class AngularFirestore {
   constructor(
     @Inject(FIREBASE_OPTIONS) options: FirebaseOptions,
     @Optional() @Inject(FIREBASE_APP_NAME) name: string | null | undefined,
-    @Optional() @Inject(ENABLE_PERSISTENCE) shouldEnablePersistence: boolean | null,
+    @Optional()
+    @Inject(ENABLE_PERSISTENCE)
+    shouldEnablePersistence: boolean | null,
     @Optional() @Inject(SETTINGS) settings: Settings | null,
     // tslint:disable-next-line:ban-types
     @Inject(PLATFORM_ID) platformId: Object,
     zone: NgZone,
     public schedulers: ɵAngularFireSchedulers,
-    @Optional() @Inject(PERSISTENCE_SETTINGS) persistenceSettings: PersistenceSettings | null,
+    @Optional()
+    @Inject(PERSISTENCE_SETTINGS)
+    persistenceSettings: PersistenceSettings | null,
     @Optional() @Inject(USE_EMULATOR) _useEmulator: any,
     @Optional() auth: AngularFireAuth,
     @Optional() @Inject(USE_AUTH_EMULATOR) useAuthEmulator: any,
@@ -152,41 +185,64 @@ export class AngularFirestore {
     @Optional() @Inject(LANGUAGE_CODE) languageCode: string | null,
     @Optional() @Inject(USE_DEVICE_LANGUAGE) useDeviceLanguage: boolean | null,
     @Optional() @Inject(PERSISTENCE) persistence: string | null,
-    @Optional() _appCheckInstances: AppCheckInstances,
+    @Optional() _appCheckInstances: AppCheckInstances
   ) {
     const app = ɵfirebaseAppFactory(options, zone, name);
     const useEmulator: UseEmulatorArguments | null = _useEmulator;
 
     if (auth) {
-      ɵauthFactory(app, zone, useAuthEmulator, tenantId, languageCode, useDeviceLanguage, authSettings, persistence);
+      ɵauthFactory(
+        app,
+        zone,
+        useAuthEmulator,
+        tenantId,
+        languageCode,
+        useDeviceLanguage,
+        authSettings,
+        persistence
+      );
     }
 
-    [this.firestore, this.persistenceEnabled$] = ɵcacheInstance(`${app.name}.firestore`, 'AngularFirestore', app.name, () => {
-      const firestore = zone.runOutsideAngular(() => app.firestore());
-      if (settings) {
-        firestore.settings(settings);
-      }
-      if (useEmulator) {
-        firestore.useEmulator(...useEmulator);
-      }
+    [this.firestore, this.persistenceEnabled$] = ɵcacheInstance(
+      `${app.name}.firestore`,
+      'AngularFirestore',
+      app.name,
+      () => {
+        const firestore = zone.runOutsideAngular(() => app.firestore());
+        if (settings) {
+          firestore.settings(settings);
+        }
+        if (useEmulator) {
+          firestore.useEmulator(...useEmulator);
+        }
 
-      if (shouldEnablePersistence && !isPlatformServer(platformId)) {
-        // We need to try/catch here because not all enablePersistence() failures are caught
-        // https://github.com/firebase/firebase-js-sdk/issues/608
-        const enablePersistence = () => {
-          try {
-            return from(firestore.enablePersistence(persistenceSettings || undefined).then(() => true, () => false));
-          } catch (e) {
-            if (typeof console !== 'undefined') { console.warn(e); }
-            return of(false);
-          }
-        };
-        return [firestore, zone.runOutsideAngular(enablePersistence)];
-      } else {
-        return [firestore, of(false)];
-      }
-
-    }, [settings, useEmulator, shouldEnablePersistence]);
+        if (shouldEnablePersistence && !isPlatformServer(platformId)) {
+          // We need to try/catch here because not all enablePersistence() failures are caught
+          // https://github.com/firebase/firebase-js-sdk/issues/608
+          const enablePersistence = () => {
+            try {
+              return from(
+                firestore
+                  .enablePersistence(persistenceSettings || undefined)
+                  .then(
+                    () => true,
+                    () => false
+                  )
+              );
+            } catch (e) {
+              if (typeof console !== 'undefined') {
+                console.warn(e);
+              }
+              return of(false);
+            }
+          };
+          return [firestore, zone.runOutsideAngular(enablePersistence)];
+        } else {
+          return [firestore, of(false)];
+        }
+      },
+      [settings, useEmulator, shouldEnablePersistence]
+    );
   }
 
   /**
@@ -194,13 +250,19 @@ export class AngularFirestore {
    * CollectionReference and an optional query function to narrow the result
    * set.
    */
-  collection<T>(path: string, queryFn?: QueryFn): AngularFirestoreCollection<T>;
-  // tslint:disable-next-line:unified-signatures
-  collection<T>(ref: CollectionReference, queryFn?: QueryFn): AngularFirestoreCollection<T>;
-  collection<T>(pathOrRef: string | CollectionReference<T>, queryFn?: QueryFn): AngularFirestoreCollection<T> {
+  collection<T>(
+    ref: string | CollectionReference,
+    queryFn?: QueryFn
+  ): AngularFirestoreCollection<T>;
+  collection<T>(
+    pathOrRef: string | CollectionReference<T>,
+    queryFn?: QueryFn
+  ): AngularFirestoreCollection<T> {
     let collectionRef: CollectionReference<T>;
     if (typeof pathOrRef === 'string') {
-      collectionRef = this.firestore.collection(pathOrRef) as firebase.firestore.CollectionReference<T>;
+      collectionRef = this.firestore.collection(
+        pathOrRef
+      ) as firebase.firestore.CollectionReference<T>;
     } else {
       collectionRef = pathOrRef;
     }
@@ -214,10 +276,18 @@ export class AngularFirestore {
    * and an optional query function to narrow the result
    * set.
    */
-  collectionGroup<T>(collectionId: string, queryGroupFn?: QueryGroupFn<T>): AngularFirestoreCollectionGroup<T> {
-    const queryFn = queryGroupFn || (ref => ref);
-    const collectionGroup: Query<T> = this.firestore.collectionGroup(collectionId) as firebase.firestore.Query<T>;
-    return new AngularFirestoreCollectionGroup<T>(queryFn(collectionGroup), this);
+  collectionGroup<T>(
+    collectionId: string,
+    queryGroupFn?: QueryGroupFn<T>
+  ): AngularFirestoreCollectionGroup<T> {
+    const queryFn = queryGroupFn || ((ref) => ref);
+    const collectionGroup: Query<T> = this.firestore.collectionGroup(
+      collectionId
+    ) as firebase.firestore.Query<T>;
+    return new AngularFirestoreCollectionGroup<T>(
+      queryFn(collectionGroup),
+      this
+    );
   }
 
   /**
@@ -229,10 +299,14 @@ export class AngularFirestore {
   doc<T>(path: string): AngularFirestoreDocument<T>;
   // tslint:disable-next-line:unified-signatures
   doc<T>(ref: DocumentReference): AngularFirestoreDocument<T>;
-  doc<T>(pathOrRef: string | DocumentReference<T>): AngularFirestoreDocument<T> {
+  doc<T>(
+    pathOrRef: string | DocumentReference<T>
+  ): AngularFirestoreDocument<T> {
     let ref: DocumentReference<T>;
     if (typeof pathOrRef === 'string') {
-      ref = this.firestore.doc(pathOrRef) as firebase.firestore.DocumentReference<T>;
+      ref = this.firestore.doc(
+        pathOrRef
+      ) as firebase.firestore.DocumentReference<T>;
     } else {
       ref = pathOrRef;
     }

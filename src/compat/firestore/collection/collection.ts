@@ -1,9 +1,16 @@
 import { from, Observable } from 'rxjs';
 import { filter, map, pairwise, scan, startWith } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
-import { keepUnstableUntilFirst } from '@angular/fire';
+import { keepUnstableUntilFirst } from '@mandobridge/angularfire';
 
-import { CollectionReference, DocumentChangeAction, DocumentChangeType, DocumentData, DocumentReference, Query } from '../interfaces';
+import {
+  CollectionReference,
+  DocumentChangeAction,
+  DocumentChangeType,
+  DocumentData,
+  DocumentReference,
+  Query,
+} from '../interfaces';
 import { docChanges, sortedChanges } from './changes';
 import { AngularFirestoreDocument } from '../document/document';
 import { fromCollectionRef } from '../observable/fromRef';
@@ -52,18 +59,23 @@ export class AngularFirestoreCollection<T = DocumentData> {
   constructor(
     public readonly ref: CollectionReference<T>,
     private readonly query: Query<T>,
-    private readonly afs: AngularFirestore) { }
+    private readonly afs: AngularFirestore
+  ) {}
 
   /**
    * Listen to the latest change in the stream. This method returns changes
    * as they occur and they are not sorted by query order. This allows you to construct
    * your own data structure.
    */
-  stateChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
+  stateChanges(
+    events?: DocumentChangeType[]
+  ): Observable<DocumentChangeAction<T>[]> {
     let source = docChanges<T>(this.query, this.afs.schedulers.outsideAngular);
     if (events && events.length > 0) {
       source = source.pipe(
-        map(actions => actions.filter(change => events.indexOf(change.type) > -1))
+        map((actions) =>
+          actions.filter((change) => events.indexOf(change.type) > -1)
+        )
       );
     }
     return source.pipe(
@@ -81,20 +93,28 @@ export class AngularFirestoreCollection<T = DocumentData> {
    * Create a stream of changes as they occur it time. This method is similar to stateChanges()
    * but it collects each event in an array over time.
    */
-  auditTrail(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return this.stateChanges(events).pipe(scan((current, action) => [...current, ...action], []));
+  auditTrail(
+    events?: DocumentChangeType[]
+  ): Observable<DocumentChangeAction<T>[]> {
+    return this.stateChanges(events).pipe(
+      scan((current, action) => [...current, ...action], [])
+    );
   }
 
   /**
    * Create a stream of synchronized changes. This method keeps the local array in sorted
    * query order.
    */
-  snapshotChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
+  snapshotChanges(
+    events?: DocumentChangeType[]
+  ): Observable<DocumentChangeAction<T>[]> {
     const validatedEvents = validateEventsArray(events);
-    const scheduledSortedChanges$ = sortedChanges<T>(this.query, validatedEvents, this.afs.schedulers.outsideAngular);
-    return scheduledSortedChanges$.pipe(
-      keepUnstableUntilFirst
+    const scheduledSortedChanges$ = sortedChanges<T>(
+      this.query,
+      validatedEvents,
+      this.afs.schedulers.outsideAngular
     );
+    return scheduledSortedChanges$.pipe(keepUnstableUntilFirst);
   }
 
   /**
@@ -106,31 +126,37 @@ export class AngularFirestoreCollection<T = DocumentData> {
   valueChanges(): Observable<T[]>;
   // tslint:disable-next-line:unified-signatures
   valueChanges({}): Observable<T[]>;
-  valueChanges<K extends string>(options: {idField: K}): Observable<(T & { [T in K]: string })[]>;
-  valueChanges<K extends string>(options: {idField?: K} = {}): Observable<T[]> {
-    return fromCollectionRef<T>(this.query, this.afs.schedulers.outsideAngular)
-      .pipe(
-        map(actions => actions.payload.docs.map(a => {
+  valueChanges<K extends string>(options: {
+    idField: K;
+  }): Observable<(T & { [T in K]: string })[]>;
+  valueChanges<K extends string>(
+    options: { idField?: K } = {}
+  ): Observable<T[]> {
+    return fromCollectionRef<T>(
+      this.query,
+      this.afs.schedulers.outsideAngular
+    ).pipe(
+      map((actions) =>
+        actions.payload.docs.map((a) => {
           if (options.idField) {
             return {
-              ...a.data() as {},
-              ...{ [options.idField]: a.id }
+              ...(a.data() as {}),
+              ...{ [options.idField]: a.id },
             } as T & { [T in K]: string };
           } else {
             return a.data();
           }
-        })),
-        keepUnstableUntilFirst
-      );
+        })
+      ),
+      keepUnstableUntilFirst
+    );
   }
 
   /**
    * Retrieve the results of the query once.
    */
   get(options?: firebase.firestore.GetOptions) {
-    return from(this.query.get(options)).pipe(
-      keepUnstableUntilFirst,
-    );
+    return from(this.query.get(options)).pipe(keepUnstableUntilFirst);
   }
 
   /**

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { getToken, AppCheck } from '@angular/fire/app-check';
-import { traceUntilFirst } from '@angular/fire/performance';
+import { getToken, AppCheck } from '@mandobridge/angularfire/app-check';
+import { traceUntilFirst } from '@mandobridge/angularfire/performance';
 import { EMPTY, from, Observable } from 'rxjs';
-import { keepUnstableUntilFirst } from '@angular/fire';
+import { keepUnstableUntilFirst } from '@mandobridge/angularfire';
 import { share } from 'rxjs/operators';
 
 @Component({
@@ -10,13 +10,17 @@ import { share } from 'rxjs/operators';
   template: `
     <p>
       App Check!
-      <code>{{ (change$ | async)?.token | slice:0:12 }}<ng-container *ngIf="(change$ | async) !== null">&hellip;</ng-container></code>
+      <code
+        >{{ (change$ | async)?.token | slice : 0 : 12
+        }}<ng-container *ngIf="(change$ | async) !== null"
+          >&hellip;</ng-container
+        ></code
+      >
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class AppCheckComponent implements OnInit {
-
   readonly change$: Observable<any>;
 
   constructor(appCheck: AppCheck) {
@@ -24,14 +28,12 @@ export class AppCheckComponent implements OnInit {
       this.change$ = from(getToken(appCheck)).pipe(
         traceUntilFirst('app-check'),
         keepUnstableUntilFirst,
-        share(),
+        share()
       );
     } else {
       this.change$ = EMPTY;
     }
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

@@ -1,11 +1,20 @@
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireDatabase, AngularFireDatabaseModule, URL } from '@angular/fire/compat/database';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireDatabase,
+  AngularFireDatabaseModule,
+  URL,
+} from '@mandobridge/angularfire/compat/database';
 import { TestBed } from '@angular/core/testing';
 import { COMMON_CONFIG } from '../../test-config';
 import { NgZone } from '@angular/core';
 import 'firebase/compat/database';
 import { rando } from '../../utils';
-import { ɵAngularFireSchedulers } from '@angular/fire';
+import { ɵAngularFireSchedulers } from '@mandobridge/angularfire';
 
 describe('AngularFireDatabase', () => {
   let app: FirebaseApp;
@@ -18,11 +27,9 @@ describe('AngularFireDatabase', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, firebaseAppName),
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
       ],
-      providers: [
-        { provide: URL, useValue: 'http://localhost:9000' }
-      ]
+      providers: [{ provide: URL, useValue: 'http://localhost:9000' }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -31,7 +38,6 @@ describe('AngularFireDatabase', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireDatabase type', () => {
       expect(db instanceof AngularFireDatabase).toEqual(true);
     });
@@ -43,8 +49,21 @@ describe('AngularFireDatabase', () => {
     it('should accept a Firebase App in the constructor', (done) => {
       const schedulers = new ɵAngularFireSchedulers(zone);
       const database = new AngularFireDatabase(
-        app.options, rando(), undefined, {}, zone, schedulers, undefined, undefined,
-        undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+        app.options,
+        rando(),
+        undefined,
+        {},
+        zone,
+        schedulers,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined
       );
       expect(database instanceof AngularFireDatabase).toEqual(true);
       // try { database.database.app.delete().then(done, done); } catch(e) { done(); }
@@ -54,9 +73,7 @@ describe('AngularFireDatabase', () => {
     it('should have an initialized Firebase app instance member', () => {
       expect(db.database.app.name).toEqual(firebaseAppName);
     });
-
   });
-
 });
 
 describe('AngularFireDatabase w/options', () => {
@@ -73,13 +90,13 @@ describe('AngularFireDatabase w/options', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: firebaseAppName },
         { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
-        { provide: URL, useValue: url }
-      ]
+        { provide: URL, useValue: url },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -91,7 +108,6 @@ describe('AngularFireDatabase w/options', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireDatabase type', () => {
       expect(db instanceof AngularFireDatabase).toEqual(true);
     });
@@ -119,5 +135,4 @@ describe('AngularFireDatabase w/options', () => {
         });
     */
   });
-
 });

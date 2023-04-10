@@ -1,5 +1,5 @@
 import { Functions as FirebaseFunctions } from 'firebase/functions';
-import { ɵgetAllInstancesOf } from '@angular/fire';
+import { ɵgetAllInstancesOf } from '@mandobridge/angularfire';
 import { from, timer } from 'rxjs';
 import { concatMap, distinct } from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ export class FunctionsInstances {
 }
 
 export const functionInstance$ = timer(0, 300).pipe(
-  concatMap(() => from(ɵgetAllInstancesOf<FirebaseFunctions>(FUNCTIONS_PROVIDER_NAME))),
-  distinct(),
+  concatMap(() =>
+    from(ɵgetAllInstancesOf<FirebaseFunctions>(FUNCTIONS_PROVIDER_NAME))
+  ),
+  distinct()
 );

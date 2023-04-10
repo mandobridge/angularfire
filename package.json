@@ -1,8 +1,12 @@
 {
-  "name": "@angular/fire",
+  "name": "@mandobridge/angularfire",
   "version": "7.5.0",
   "description": "The official Angular library for Firebase.",
   "private": true,
+  "files": [
+    "./distdist/packages-dist/**"
+  ],
+  "main": "./dist/packages-dist/public_api.d.ts",
   "scripts": {
     "test": "npm run build:jasmine && npm run test:node && npm run test:chrome-headless",
     "test:watch": "npx firebase-tools@latest emulators:exec --project=angularfire2-test \"ng test --watch=true --browsers=Chrome\"",
@@ -124,7 +128,7 @@
     "tsconfig-paths": "^3.8.0",
     "tsickle": "^0.39.1",
     "tslint": "~6.1.0",
-    "ttypescript": "^1.5.12",
+    "ttypescript": "^1.5.15",
     "typedoc": "^0.16.4",
     "typescript": ">=4.2.3 <4.3.0"
   },

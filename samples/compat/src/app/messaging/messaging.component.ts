@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireMessaging } from '@angular/fire/compat/messaging';
-import { trace } from '@angular/fire/compat/performance';
+import { AngularFireMessaging } from '@mandobridge/angularfire/compat/messaging';
+import { trace } from '@mandobridge/angularfire/compat/performance';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -14,10 +14,9 @@ import { tap } from 'rxjs/operators';
       <button (click)="request()" *ngIf="showRequest">Request FCM token</button>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class MessagingComponent implements OnInit {
-
   token$: Observable<any>;
   message$: Observable<any>;
   showRequest = false;
@@ -26,15 +25,13 @@ export class MessagingComponent implements OnInit {
     this.message$ = messaging.messages;
     this.token$ = messaging.tokenChanges.pipe(
       trace('token'),
-      tap(token => this.showRequest = !token)
+      tap((token) => (this.showRequest = !token))
     );
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   request() {
     this.messaging.requestPermission.subscribe(console.log, console.error);
   }
-
 }

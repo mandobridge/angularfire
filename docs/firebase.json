@@ -1,5 +1,5 @@
 {
-  "firebase": "angular-fire-2",
+  "firebase": "mandobridge-angularfire-2",
   "public": ".",
   "redirects": [
     {
@@ -8,9 +8,5 @@
       "type": 302
     }
   ],
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
+  "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
 }

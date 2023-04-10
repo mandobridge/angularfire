@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/compat/firestore';
+import {
+  AngularFirestore,
+  DocumentChangeAction,
+} from '@mandobridge/angularfire/compat/firestore';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-protected-lazy',
   templateUrl: './protected-lazy.component.html',
-  styleUrls: ['./protected-lazy.component.css']
+  styleUrls: ['./protected-lazy.component.css'],
 })
 export class ProtectedLazyComponent implements OnInit {
-
   public snapshot: Observable<DocumentChangeAction<unknown>[]>;
 
   constructor(private afs: AngularFirestore) {
     this.snapshot = afs.collection('test').snapshotChanges();
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

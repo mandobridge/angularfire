@@ -22,8 +22,8 @@
         "dom"
       ],
       "paths": {
-        "@angular/fire": ["dist/packages-dist"],
-        "@angular/fire/*": ["dist/packages-dist/*"]
+        "@mandobridge/angularfire": ["dist/packages-dist"],
+        "@mandobridge/angularfire/*": ["dist/packages-dist/*"]
       }
     }
   }

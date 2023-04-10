@@ -1,5 +1,10 @@
 import { Component, OnInit, Optional } from '@angular/core';
-import { Auth, GoogleAuthProvider, signInWithPopup, signInAnonymously } from '@angular/fire/auth';
+import {
+  Auth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInAnonymously,
+} from '@mandobridge/angularfire/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,18 +15,14 @@ import { Router } from '@angular/router';
       <button (click)="loginAnonymously()">Log in with Anonymously</button>
     </p>
   `,
-  styles: [
-  ]
+  styles: [],
 })
 export class LoginComponent implements OnInit {
-
   redirect = ['/'];
 
-  constructor(@Optional() private auth: Auth, private router: Router) {
-  }
+  constructor(@Optional() private auth: Auth, private router: Router) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();
@@ -33,5 +34,4 @@ export class LoginComponent implements OnInit {
     await signInAnonymously(this.auth);
     await this.router.navigate(this.redirect);
   }
-
 }

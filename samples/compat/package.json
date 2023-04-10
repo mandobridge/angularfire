@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "deploy": "ng deploy",
     "dev:ssr": "cd ../.emulator && firebase emulators:exec --import seed \"cd ../compat && ng run sample:serve-ssr\"",
-    "bust": "yarn cache clean @angular/fire && yarn add ../../dist/packages-dist",
+    "bust": "yarn cache clean @mandobridge/angularfire && yarn add ../../dist/packages-dist",
     "serve:ssr": "node dist/sample/server/main.js",
     "build:ssr": "ng build --configuration production && ng run sample:server:production",
     "prerender": "ng run sample:prerender"
@@ -22,7 +22,7 @@
     "@angular/common": "^13.0.1",
     "@angular/compiler": "^13.0.1",
     "@angular/core": "^13.0.1",
-    "@angular/fire": "../../dist/packages-dist",
+    "@mandobridge/angularfire": "../../dist/packages-dist",
     "@angular/forms": "^13.0.1",
     "@angular/platform-browser": "^13.0.1",
     "@angular/platform-browser-dynamic": "^13.0.1",

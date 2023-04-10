@@ -1,6 +1,15 @@
 import firebase from 'firebase/compat/app';
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireDatabase, AngularFireDatabaseModule, ChildEvent, stateChanges, URL } from '@angular/fire/compat/database';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireDatabase,
+  AngularFireDatabaseModule,
+  ChildEvent,
+  stateChanges,
+  URL,
+} from '@mandobridge/angularfire/compat/database';
 import { TestBed } from '@angular/core/testing';
 import { COMMON_CONFIG } from '../../../test-config';
 import { skip } from 'rxjs/operators';
@@ -12,7 +21,9 @@ describe('stateChanges', () => {
   let db: AngularFireDatabase;
   let createRef: (path: string) => firebase.database.Reference;
   let batch = {};
-  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map((item, i) => ({ key: i.toString(), ...item }));
+  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map(
+    (item, i) => ({ key: i.toString(), ...item })
+  );
   Object.keys(items).forEach((key, i) => {
     batch[i] = items[key];
   });
@@ -23,11 +34,9 @@ describe('stateChanges', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
       ],
-      providers: [
-        { provide: URL, useValue: 'http://localhost:9000' }
-      ]
+      providers: [{ provide: URL, useValue: 'http://localhost:9000' }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -39,26 +48,25 @@ describe('stateChanges', () => {
     db.database.goOffline();
   });
 
-  function prepareStateChanges(opts: { events?: ChildEvent[], skipnumber: number } = { skipnumber: 0 }) {
+  function prepareStateChanges(
+    opts: { events?: ChildEvent[]; skipnumber: number } = { skipnumber: 0 }
+  ) {
     const { events, skipnumber } = opts;
     const aref = createRef(rando());
     aref.set(batch);
     const changes = stateChanges(aref, events);
     return {
       changes: changes.pipe(skip(skipnumber)),
-      ref: aref
+      ref: aref,
     };
   }
 
   it('should listen to all events by default', (done) => {
-
     const { changes } = prepareStateChanges({ skipnumber: 2 });
-    changes.subscribe(action => {
+    changes.subscribe((action) => {
       expect(action.key).toEqual('2');
       expect(action.payload.val()).toEqual(items[items.length - 1]);
       done();
     });
-
   });
-
 });

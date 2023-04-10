@@ -1,16 +1,25 @@
-import { SchematicsException, Tree, SchematicContext } from '@angular-devkit/schematics';
+import {
+  SchematicsException,
+  Tree,
+  SchematicContext,
+} from '@angular-devkit/schematics';
 import {
   generateFirebaseRc,
   overwriteIfExists,
   safeReadJSON,
-  stringifyFormatted
+  stringifyFormatted,
 } from '../common';
-import { NgAddNormalizedOptions, FirebaseJSON, Workspace, WorkspaceProject } from '../interfaces';
+import {
+  NgAddNormalizedOptions,
+  FirebaseJSON,
+  Workspace,
+  WorkspaceProject,
+} from '../interfaces';
 import { shortSiteName } from '../common';
 
 function emptyFirebaseJson() {
   return {
-    hosting: []
+    hosting: [],
   };
 }
 
@@ -19,25 +28,33 @@ function generateHostingConfig(project: string, dist: string) {
     target: project,
     public: dist,
     ignore: ['**/.*'],
-    headers: [{
-      source: '*.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].+(css|js)',
-      headers: [{
-        key: 'Cache-Control',
-        value: 'public,max-age=31536000,immutable',
-      }],
-    }, {
-      source: '/@(ngsw-worker.js|ngsw.json)',
-      headers: [{
-        key: 'Cache-Control',
-        value: 'no-cache',
-      }],
-    }],
+    headers: [
+      {
+        source:
+          '*.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].+(css|js)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public,max-age=31536000,immutable',
+          },
+        ],
+      },
+      {
+        source: '/@(ngsw-worker.js|ngsw.json)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache',
+          },
+        ],
+      },
+    ],
     rewrites: [
       {
         source: '**',
         destination: '/index.html',
-      }
-    ]
+      },
+    ],
   };
 }
 
@@ -55,7 +72,9 @@ export function generateFirebaseJson(
   if (firebaseJson.hosting === undefined) {
     firebaseJson.hosting = newConfig;
   } else if (Array.isArray(firebaseJson.hosting)) {
-    const targetIndex = firebaseJson.hosting.findIndex(it => it.target === newConfig.target);
+    const targetIndex = firebaseJson.hosting.findIndex(
+      (it) => it.target === newConfig.target
+    );
     if (targetIndex > -1) {
       firebaseJson.hosting[targetIndex] = newConfig;
     } else {
@@ -88,16 +107,18 @@ export const setupStaticDeployment = (config: {
   const outputPath = project.architect.build.options.outputPath;
 
   project.architect.deploy = {
-    builder: '@angular/fire:deploy',
+    builder: '@mandobridge/angularfire:deploy',
     options: {
       prerender: options.prerender,
       ssr: false,
       browserTarget: options.browserTarget,
       firebaseProject: options.firebaseProject.projectId,
       firebaseHostingSite: shortSiteName(options.firebaseHostingSite),
-      ...(options.serverTarget ? {serverTarget: options.serverTarget} : {}),
-      ...(options.prerenderTarget ? {prerenderTarget: options.prerenderTarget} : {}),
-    }
+      ...(options.serverTarget ? { serverTarget: options.serverTarget } : {}),
+      ...(options.prerenderTarget
+        ? { prerenderTarget: options.prerenderTarget }
+        : {}),
+    },
   };
 
   tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));

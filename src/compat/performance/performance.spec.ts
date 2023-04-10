@@ -1,6 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFirePerformance, AngularFirePerformanceModule } from '@angular/fire/compat/performance';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFirePerformance,
+  AngularFirePerformanceModule,
+} from '@mandobridge/angularfire/compat/performance';
 import { COMMON_CONFIG } from '../../test-config';
 import { rando } from '../../utils';
 
@@ -12,8 +18,8 @@ describe('AngularFirePerformance', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFirePerformanceModule
-      ]
+        AngularFirePerformanceModule,
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -27,5 +33,4 @@ describe('AngularFirePerformance', () => {
   it('should have the Performance instance', () => {
     expect(afp.dataCollectionEnabled).toBeDefined();
   });
-
 });

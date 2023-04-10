@@ -1,9 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireAnalytics, AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import {
+  AngularFireModule,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireAnalytics,
+  AngularFireAnalyticsModule,
+} from '@mandobridge/angularfire/compat/analytics';
 import { COMMON_CONFIG } from '../../test-config';
 import { rando } from '../../utils';
-
 
 describe('AngularFireAnalytics', () => {
   let app: FirebaseApp;
@@ -13,8 +18,8 @@ describe('AngularFireAnalytics', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireAnalyticsModule
-      ]
+        AngularFireAnalyticsModule,
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -28,5 +33,4 @@ describe('AngularFireAnalytics', () => {
   it('should have the Firebase Functions instance', () => {
     expect(analytics.app).toBeDefined();
   });
-
 });

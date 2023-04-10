@@ -1,6 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireMessaging, AngularFireMessagingModule } from '@angular/fire/compat/messaging';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireMessaging,
+  AngularFireMessagingModule,
+} from '@mandobridge/angularfire/compat/messaging';
 import { COMMON_CONFIG } from '../../test-config';
 import { rando } from '../../utils';
 
@@ -12,8 +20,8 @@ describe('AngularFireMessaging', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireMessagingModule
-      ]
+        AngularFireMessagingModule,
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -27,7 +35,6 @@ describe('AngularFireMessaging', () => {
   it('should have the FCM instance', () => {
     expect(afm.deleteToken).toBeDefined();
   });
-
 });
 
 const FIREBASE_APP_NAME_TOO = (Math.random() + 1).toString(36).substring(7);
@@ -40,12 +47,12 @@ describe('AngularFireMessaging with different app', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireMessagingModule
+        AngularFireMessagingModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: FIREBASE_APP_NAME_TOO },
-        { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG }
-      ]
+        { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -53,7 +60,6 @@ describe('AngularFireMessaging with different app', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireMessaging type', () => {
       expect(afm instanceof AngularFireMessaging).toEqual(true);
     });
@@ -61,7 +67,5 @@ describe('AngularFireMessaging with different app', () => {
     it('should have the FCM instance', () => {
       expect(afm.deleteToken).toBeDefined();
     });
-
   });
-
 });

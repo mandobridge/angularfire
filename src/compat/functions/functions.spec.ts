@@ -1,6 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireFunctions, AngularFireFunctionsModule, USE_EMULATOR, REGION } from '@angular/fire/compat/functions';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireFunctions,
+  AngularFireFunctionsModule,
+  USE_EMULATOR,
+  REGION,
+} from '@mandobridge/angularfire/compat/functions';
 import { COMMON_CONFIG } from '../../test-config';
 import 'firebase/compat/functions';
 import { rando } from '../../utils';
@@ -13,8 +23,8 @@ describe('AngularFireFunctions', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireFunctionsModule
-      ]
+        AngularFireFunctionsModule,
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -28,7 +38,6 @@ describe('AngularFireFunctions', () => {
   it('should have the Firebase Functions instance', () => {
     expect(afFns.useFunctionsEmulator).toBeDefined();
   });
-
 });
 
 describe('AngularFireFunctions with different app', () => {
@@ -41,14 +50,14 @@ describe('AngularFireFunctions with different app', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireFunctionsModule
+        AngularFireFunctionsModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: firebaseAppName },
         { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
         { provide: USE_EMULATOR, useValue: ['localhost', 9999] },
-        { provide: REGION, useValue: 'asia-northeast1' }
-      ]
+        { provide: REGION, useValue: 'asia-northeast1' },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -56,7 +65,6 @@ describe('AngularFireFunctions with different app', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireAuth type', () => {
       expect(afFns instanceof AngularFireFunctions).toEqual(true);
     });
@@ -64,7 +72,5 @@ describe('AngularFireFunctions with different app', () => {
     it('should have the Firebase Functions instance', () => {
       expect(afFns.useFunctionsEmulator).toBeDefined();
     });
-
   });
-
 });

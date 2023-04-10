@@ -1,6 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFireRemoteConfig, AngularFireRemoteConfigModule, DEFAULTS, SETTINGS } from '@angular/fire/compat/remote-config';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFireRemoteConfig,
+  AngularFireRemoteConfigModule,
+  DEFAULTS,
+  SETTINGS,
+} from '@mandobridge/angularfire/compat/remote-config';
 import { COMMON_CONFIG } from '../../test-config';
 import { rando } from '../../utils';
 
@@ -12,8 +22,8 @@ describe('AngularFireRemoteConfig', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireRemoteConfigModule
-      ]
+        AngularFireRemoteConfigModule,
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -27,7 +37,6 @@ describe('AngularFireRemoteConfig', () => {
   it('should have the Firebase Functions instance', () => {
     expect(rc.getValue).toBeDefined();
   });
-
 });
 
 const FIREBASE_APP_NAME_TOO = (Math.random() + 1).toString(36).substring(7);
@@ -40,14 +49,14 @@ describe('AngularFireRemoteConfig with different app', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFireRemoteConfigModule
+        AngularFireRemoteConfigModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: FIREBASE_APP_NAME_TOO },
         { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
         { provide: SETTINGS, useValue: {} },
-        { provide: DEFAULTS, useValue: {} }
-      ]
+        { provide: DEFAULTS, useValue: {} },
+      ],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -55,7 +64,6 @@ describe('AngularFireRemoteConfig with different app', () => {
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFireAuth type', () => {
       expect(rc instanceof AngularFireRemoteConfig).toEqual(true);
     });
@@ -63,7 +71,5 @@ describe('AngularFireRemoteConfig with different app', () => {
     it('should have the Firebase Functions instance', () => {
       expect(rc.getValue).toBeDefined();
     });
-
   });
-
 });

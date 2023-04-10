@@ -1,6 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { FirebaseApp, provideFirebaseApp, getApp, initializeApp, deleteApp } from '@angular/fire/app';
-import { Analytics, provideAnalytics, getAnalytics, isSupported } from '@angular/fire/analytics';
+import {
+  FirebaseApp,
+  provideFirebaseApp,
+  getApp,
+  initializeApp,
+  deleteApp,
+} from '@mandobridge/angularfire/app';
+import {
+  Analytics,
+  provideAnalytics,
+  getAnalytics,
+  isSupported,
+} from '@mandobridge/angularfire/analytics';
 import { COMMON_CONFIG_TOO } from '../test-config';
 import { rando } from '../utils';
 
@@ -10,7 +21,7 @@ describe('Analytics', () => {
   let providedAnalytics: Analytics;
   let appName: string;
 
-  beforeAll(done => {
+  beforeAll((done) => {
     // The APP_INITIALIZER that is making isSupported() sync for DI may not
     // be done evaulating by the time we inject from the TestBed. We can
     // ensure correct behavior by waiting for the (global) isSuppported() promise
@@ -19,28 +30,25 @@ describe('Analytics', () => {
   });
 
   describe('single injection', () => {
-
     beforeEach(() => {
-        appName = rando();
-        TestBed.configureTestingModule({
-            imports: [
-                provideFirebaseApp(() => initializeApp(COMMON_CONFIG_TOO, appName)),
-                provideAnalytics(() => {
-                    providedAnalytics = getAnalytics(getApp(appName));
-                    return providedAnalytics;
-                }),
-            ],
-        });
-        app = TestBed.inject(FirebaseApp);
-        analytics = TestBed.inject(Analytics);
+      appName = rando();
+      TestBed.configureTestingModule({
+        imports: [
+          provideFirebaseApp(() => initializeApp(COMMON_CONFIG_TOO, appName)),
+          provideAnalytics(() => {
+            providedAnalytics = getAnalytics(getApp(appName));
+            return providedAnalytics;
+          }),
+        ],
+      });
+      app = TestBed.inject(FirebaseApp);
+      analytics = TestBed.inject(Analytics);
     });
 
     it('should be injectable', () => {
-        expect(providedAnalytics).toBeTruthy();
-        expect(analytics).toEqual(providedAnalytics);
-        expect(analytics.app).toEqual(app);
+      expect(providedAnalytics).toBeTruthy();
+      expect(analytics).toEqual(providedAnalytics);
+      expect(analytics.app).toEqual(app);
     });
-
   });
-
 });

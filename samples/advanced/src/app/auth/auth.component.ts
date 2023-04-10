@@ -1,8 +1,14 @@
 import { Component, OnInit, OnDestroy, Optional } from '@angular/core';
-import { Auth, authState, signInAnonymously, signOut, User } from '@angular/fire/auth';
+import {
+  Auth,
+  authState,
+  signInAnonymously,
+  signOut,
+  User,
+} from '@mandobridge/angularfire/auth';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { traceUntilFirst } from '@angular/fire/performance';
+import { traceUntilFirst } from '@mandobridge/angularfire/performance';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,11 +21,10 @@ import { Router } from '@angular/router';
       <button (click)="logout()" *ngIf="showLogoutButton">Log out</button>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class AuthComponent implements OnInit, OnDestroy {
-
-  private readonly userDisposable: Subscription|undefined;
+  private readonly userDisposable: Subscription | undefined;
   public readonly user: Observable<User | null> = EMPTY;
 
   showLoginButton = false;
@@ -28,17 +33,19 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(@Optional() private auth: Auth, private router: Router) {
     if (auth) {
       this.user = authState(this.auth);
-      this.userDisposable = authState(this.auth).pipe(
-        traceUntilFirst('auth'),
-        map(u => !!u)
-      ).subscribe(isLoggedIn => {
-        this.showLoginButton = !isLoggedIn;
-        this.showLogoutButton = isLoggedIn;
-      });
+      this.userDisposable = authState(this.auth)
+        .pipe(
+          traceUntilFirst('auth'),
+          map((u) => !!u)
+        )
+        .subscribe((isLoggedIn) => {
+          this.showLoginButton = !isLoggedIn;
+          this.showLogoutButton = isLoggedIn;
+        });
     }
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     if (this.userDisposable) {
@@ -49,5 +56,4 @@ export class AuthComponent implements OnInit, OnDestroy {
   async logout() {
     return await signOut(this.auth);
   }
-
 }

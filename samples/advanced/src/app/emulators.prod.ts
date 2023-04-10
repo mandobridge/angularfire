@@ -1,9 +1,8 @@
-
-import { Auth } from '@angular/fire/auth';
-import { Database } from '@angular/fire/database';
-import { Firestore } from '@angular/fire/firestore';
-import { Functions } from '@angular/fire/functions';
-import { Storage } from '@angular/fire/storage';
+import { Auth } from '@mandobridge/angularfire/auth';
+import { Database } from '@mandobridge/angularfire/database';
+import { Firestore } from '@mandobridge/angularfire/firestore';
+import { Functions } from '@mandobridge/angularfire/functions';
+import { Storage } from '@mandobridge/angularfire/storage';
 
 export const connectAuthEmulatorInDevMode = (_: Auth) => {};
 export const connectFirestoreEmulatorInDevMode = (_: Firestore) => {};

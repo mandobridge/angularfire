@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Functions, httpsCallableData } from '@angular/fire/functions';
+import {
+  Functions,
+  httpsCallableData,
+} from '@mandobridge/angularfire/functions';
 import { EMPTY, Observable } from 'rxjs';
 
 @Component({
@@ -11,15 +14,16 @@ import { EMPTY, Observable } from 'rxjs';
       <button (click)="request()">Call!</button>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class FunctionsComponent implements OnInit {
-
   yadaFunction: (data: any) => Observable<any>;
   response$: Observable<any> = EMPTY;
 
   constructor(functions: Functions) {
-    this.yadaFunction = httpsCallableData(functions, 'yada', { timeout: 3_000 });
+    this.yadaFunction = httpsCallableData(functions, 'yada', {
+      timeout: 3_000,
+    });
   }
 
   ngOnInit(): void {}
@@ -27,5 +31,4 @@ export class FunctionsComponent implements OnInit {
   async request() {
     this.response$ = this.yadaFunction({});
   }
-
 }

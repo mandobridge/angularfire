@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/compat/functions';
+import { AngularFireFunctions } from '@mandobridge/angularfire/compat/functions';
 import { EMPTY, Observable } from 'rxjs';
 
 @Component({
@@ -11,10 +11,9 @@ import { EMPTY, Observable } from 'rxjs';
       <button (click)="request()">Call!</button>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class FunctionsComponent implements OnInit {
-
   response$: Observable<any>;
 
   constructor(public readonly functions: AngularFireFunctions) {
@@ -24,7 +23,8 @@ export class FunctionsComponent implements OnInit {
   ngOnInit(): void {}
 
   request() {
-    this.response$ = this.functions.httpsCallable('yada', { timeout: 3_000 })({});
+    this.response$ = this.functions.httpsCallable('yada', { timeout: 3_000 })(
+      {}
+    );
   }
-
 }

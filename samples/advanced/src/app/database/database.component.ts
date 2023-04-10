@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { makeStateKey, TransferState } from '@angular/platform-browser';
 import { startWith, switchMap, tap } from 'rxjs/operators';
-import { traceUntilFirst } from '@angular/fire/performance';
+import { traceUntilFirst } from '@mandobridge/angularfire/performance';
 
 @Component({
   selector: 'app-database',
@@ -12,10 +12,9 @@ import { traceUntilFirst } from '@angular/fire/performance';
       <code>{{ testObjectValue$ | async | json }}</code>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class DatabaseComponent implements OnInit {
-
   public readonly testObjectValue$: Observable<any>;
 
   constructor(state: TransferState) {
@@ -23,14 +22,12 @@ export class DatabaseComponent implements OnInit {
     const existing = state.get(key, undefined);
     this.testObjectValue$ = of(undefined).pipe(
       switchMap(() => import('./lazyDatabase')),
-      switchMap(({valueChanges}) => valueChanges),
+      switchMap(({ valueChanges }) => valueChanges),
       traceUntilFirst('database'),
-      tap(it => state.set(key, it)),
-      existing ? startWith(existing) : tap(),
+      tap((it) => state.set(key, it)),
+      existing ? startWith(existing) : tap()
     );
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

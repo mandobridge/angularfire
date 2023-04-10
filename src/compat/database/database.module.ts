@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { AngularFireDatabase } from './database';
 import firebase from 'firebase/compat/app';
-import { VERSION } from '@angular/fire';
+import { VERSION } from '@mandobridge/angularfire';
 
 @NgModule({
-  providers: [ AngularFireDatabase ]
+  providers: [AngularFireDatabase],
 })
 export class AngularFireDatabaseModule {
   constructor() {

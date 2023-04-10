@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { FirebaseApp, provideFirebaseApp, initializeApp, deleteApp } from '@angular/fire/app';
+import {
+  FirebaseApp,
+  provideFirebaseApp,
+  initializeApp,
+  deleteApp,
+} from '@mandobridge/angularfire/app';
 import { COMMON_CONFIG } from '../test-config';
 import { rando } from '../utils';
 
@@ -9,25 +14,22 @@ describe('FirebaseApp', () => {
   let appName: string;
 
   describe('single injection', () => {
-
     beforeEach(() => {
-        appName = rando();
-        TestBed.configureTestingModule({
-            imports: [
-                provideFirebaseApp(() => {
-                    providedApp = initializeApp(COMMON_CONFIG, appName);
-                    return providedApp;
-                })
-            ],
-        });
-        app = TestBed.inject(FirebaseApp);
+      appName = rando();
+      TestBed.configureTestingModule({
+        imports: [
+          provideFirebaseApp(() => {
+            providedApp = initializeApp(COMMON_CONFIG, appName);
+            return providedApp;
+          }),
+        ],
+      });
+      app = TestBed.inject(FirebaseApp);
     });
 
     it('should be injectable', () => {
-        expect(app).toBeTruthy();
-        expect(app).toEqual(providedApp);
+      expect(app).toBeTruthy();
+      expect(app).toEqual(providedApp);
     });
-
   });
-
 });

@@ -1,14 +1,19 @@
 import { isPlatformServer } from '@angular/common';
-import { Inject, Injectable, NgZone, OnDestroy, PLATFORM_ID } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  NgZone,
+  OnDestroy,
+  PLATFORM_ID,
+} from '@angular/core';
 import { AngularFireAnalytics } from './analytics';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFireAuth } from '@mandobridge/angularfire/compat/auth';
 import { Subscription } from 'rxjs';
 import firebase from 'firebase/compat/app';
-import { VERSION } from '@angular/fire';
+import { VERSION } from '@mandobridge/angularfire';
 
 @Injectable()
 export class UserTrackingService implements OnDestroy {
-
   initialized: Promise<void>;
   private disposables: Array<Subscription> = [];
 
@@ -18,34 +23,41 @@ export class UserTrackingService implements OnDestroy {
     // tslint:disable-next-line:ban-types
     @Inject(PLATFORM_ID) platformId: Object,
     auth: AngularFireAuth,
-    zone: NgZone,
+    zone: NgZone
   ) {
-    firebase.registerVersion('angularfire', VERSION.full, 'compat-user-tracking');
+    firebase.registerVersion(
+      'angularfire',
+      VERSION.full,
+      'compat-user-tracking'
+    );
     if (!isPlatformServer(platformId)) {
       let resolveInitialized;
-      this.initialized = zone.runOutsideAngular(() => new Promise(resolve => resolveInitialized = resolve));
+      this.initialized = zone.runOutsideAngular(
+        () => new Promise((resolve) => (resolveInitialized = resolve))
+      );
       this.disposables = [
-          auth.authState.subscribe(user => {
-            analytics.setUserId(user?.uid);
-            resolveInitialized();
-          }),
-          auth.credential.subscribe(credential => {
-            if (credential) {
-              const method = credential.user.isAnonymous ? 'anonymous' : credential.additionalUserInfo.providerId;
-              if (credential.additionalUserInfo.isNewUser) {
-                analytics.logEvent('sign_up', { method });
-              }
-              analytics.logEvent('login', { method });
+        auth.authState.subscribe((user) => {
+          analytics.setUserId(user?.uid);
+          resolveInitialized();
+        }),
+        auth.credential.subscribe((credential) => {
+          if (credential) {
+            const method = credential.user.isAnonymous
+              ? 'anonymous'
+              : credential.additionalUserInfo.providerId;
+            if (credential.additionalUserInfo.isNewUser) {
+              analytics.logEvent('sign_up', { method });
             }
-          })
+            analytics.logEvent('login', { method });
+          }
+        }),
       ];
     } else {
       this.initialized = Promise.resolve();
     }
-
   }
 
   ngOnDestroy() {
-    this.disposables.forEach(it => it.unsubscribe());
+    this.disposables.forEach((it) => it.unsubscribe());
   }
 }

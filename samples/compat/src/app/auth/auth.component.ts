@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFireAuth } from '@mandobridge/angularfire/compat/auth';
 import firebase from '@firebase/app-compat';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { trace } from '@angular/fire/compat/performance';
+import { trace } from '@mandobridge/angularfire/compat/performance';
 import { Inject } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 
@@ -14,33 +14,41 @@ import { isPlatformServer } from '@angular/common';
       Auth!
       {{ (auth.user | async)?.uid | json }}
       {{ (auth.credential | async)?.additionalUserInfo.isNewUser | json }}
-      <button (click)="login()" *ngIf="showLoginButton">Log in with Google</button>
-      <button (click)="loginAnonymously()" *ngIf="showLoginButton">Log in anonymously</button>
+      <button (click)="login()" *ngIf="showLoginButton">
+        Log in with Google
+      </button>
+      <button (click)="loginAnonymously()" *ngIf="showLoginButton">
+        Log in anonymously
+      </button>
       <button (click)="logout()" *ngIf="showLogoutButton">Log out</button>
     </p>
   `,
-  styles: []
+  styles: [],
 })
 export class AuthComponent implements OnInit, OnDestroy {
-
-  private readonly userDisposable: Subscription|undefined;
+  private readonly userDisposable: Subscription | undefined;
 
   showLoginButton = false;
   showLogoutButton = false;
 
-  constructor(public readonly auth: AngularFireAuth, @Inject(PLATFORM_ID) platformId: object) {
+  constructor(
+    public readonly auth: AngularFireAuth,
+    @Inject(PLATFORM_ID) platformId: object
+  ) {
     if (!isPlatformServer(platformId)) {
-      this.userDisposable = this.auth.authState.pipe(
-        trace('auth'),
-        map(u => !!u)
-      ).subscribe(isLoggedIn => {
-        this.showLoginButton = !isLoggedIn;
-        this.showLogoutButton = isLoggedIn;
-      });
+      this.userDisposable = this.auth.authState
+        .pipe(
+          trace('auth'),
+          map((u) => !!u)
+        )
+        .subscribe((isLoggedIn) => {
+          this.showLoginButton = !isLoggedIn;
+          this.showLogoutButton = isLoggedIn;
+        });
     }
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     if (this.userDisposable) {
@@ -49,7 +57,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   async login() {
-    const user = await this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const user = await this.auth.signInWithPopup(
+      new firebase.auth.GoogleAuthProvider()
+    );
     // TODO sign into offline app
   }
 
@@ -62,5 +72,4 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.auth.signOut();
     // TODO sign out of offline app
   }
-
 }

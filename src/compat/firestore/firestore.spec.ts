@@ -1,5 +1,16 @@
-import { AngularFireModule, FIREBASE_APP_NAME, FIREBASE_OPTIONS, FirebaseApp } from '@angular/fire/compat';
-import { AngularFirestore, USE_EMULATOR, AngularFirestoreModule, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import {
+  AngularFireModule,
+  FIREBASE_APP_NAME,
+  FIREBASE_OPTIONS,
+  FirebaseApp,
+} from '@mandobridge/angularfire/compat';
+import {
+  AngularFirestore,
+  USE_EMULATOR,
+  AngularFirestoreModule,
+  AngularFirestoreDocument,
+  AngularFirestoreCollection,
+} from '@mandobridge/angularfire/compat/firestore';
 
 import { TestBed } from '@angular/core/testing';
 import { COMMON_CONFIG } from '../../test-config';
@@ -14,11 +25,9 @@ describe('AngularFirestore', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFirestoreModule.enablePersistence()
+        AngularFirestoreModule.enablePersistence(),
       ],
-      providers: [
-        { provide: USE_EMULATOR, useValue: ['localhost', 8080] }
-      ]
+      providers: [{ provide: USE_EMULATOR, useValue: ['localhost', 8080] }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -66,31 +75,27 @@ describe('AngularFirestore', () => {
 
   it('should throw on an invalid collection path', () => {
     const singleWrapper = () => afs.collection('collection/doc');
-    const quadWrapper = () => afs.collection('collection/doc/subcollection/doc');
+    const quadWrapper = () =>
+      afs.collection('collection/doc/subcollection/doc');
     expect(singleWrapper).toThrowError();
     expect(quadWrapper).toThrowError();
   });
 
   if (typeof window === 'undefined') {
-
     it('should not enable persistence (Node.js)', (done) => {
-      afs.persistenceEnabled$.subscribe(isEnabled => {
+      afs.persistenceEnabled$.subscribe((isEnabled) => {
         expect(isEnabled).toBe(false);
         done();
       });
     });
-
   } else {
-
     it('should enable persistence', (done) => {
-      afs.persistenceEnabled$.subscribe(isEnabled => {
+      afs.persistenceEnabled$.subscribe((isEnabled) => {
         expect(isEnabled).toBe(true);
         done();
       });
     });
-
   }
-
 });
 
 describe('AngularFirestore with different app', () => {
@@ -103,22 +108,20 @@ describe('AngularFirestore with different app', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFirestoreModule
+        AngularFirestoreModule,
       ],
       providers: [
         { provide: FIREBASE_APP_NAME, useValue: firebaseAppName },
         { provide: FIREBASE_OPTIONS, useValue: COMMON_CONFIG },
-        { provide: USE_EMULATOR, useValue: ['localhost', 8080] }
-      ]
+        { provide: USE_EMULATOR, useValue: ['localhost', 8080] },
+      ],
     });
-
 
     app = TestBed.inject(FirebaseApp);
     afs = TestBed.inject(AngularFirestore);
   });
 
   describe('<constructor>', () => {
-
     it('should be an AngularFirestore type', () => {
       expect(afs instanceof AngularFirestore).toEqual(true);
     });
@@ -131,9 +134,7 @@ describe('AngularFirestore with different app', () => {
       expect(afs.firestore.app.name).toEqual(firebaseAppName);
     });
   });
-
 });
-
 
 describe('AngularFirestore without persistance', () => {
   let app: FirebaseApp;
@@ -143,11 +144,9 @@ describe('AngularFirestore without persistance', () => {
     TestBed.configureTestingModule({
       imports: [
         AngularFireModule.initializeApp(COMMON_CONFIG, rando()),
-        AngularFirestoreModule
+        AngularFirestoreModule,
       ],
-      providers: [
-        { provide: USE_EMULATOR, useValue: ['localhost', 8080] }
-      ]
+      providers: [{ provide: USE_EMULATOR, useValue: ['localhost', 8080] }],
     });
 
     app = TestBed.inject(FirebaseApp);
@@ -155,10 +154,9 @@ describe('AngularFirestore without persistance', () => {
   });
 
   it('should not enable persistence', (done) => {
-    afs.persistenceEnabled$.subscribe(isEnabled => {
+    afs.persistenceEnabled$.subscribe((isEnabled) => {
       expect(isEnabled).toBe(false);
       done();
     });
   });
-
 });
